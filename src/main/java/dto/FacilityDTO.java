@@ -24,6 +24,17 @@ public class FacilityDTO implements Serializable {
         this.facilityPrice=facilityPrice;
     }
 
+    public FacilityDTO(int facilityNo, String facilityName, String description, int facilityPrice, String condition, int peopleInStock, String fileName, int quantity) {
+        this.facilityNo = facilityNo;
+        this.facilityName = facilityName;
+        this.description = description;
+        this.facilityPrice = facilityPrice;
+        this.condition = condition;
+        this.peopleInStock = peopleInStock;
+        this.fileName = fileName;
+        this.quantity = quantity;
+    }
+
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
