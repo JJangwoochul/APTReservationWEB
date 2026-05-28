@@ -76,13 +76,13 @@
                                 </div>
                             </div>
                             
-                            <div class="pt-2">
-                                <form name="reserveForm" action="./reserve.jsp?no=<%=facility.getFacilityNo() %>" method="post">
-                                    <button type="button" class="btn btn-warning px-4 py-2 fw-bold text-dark me-2" onclick="reserve()">
+                            <div class="d-grid gap-2">
+                                <form name="reserveForm" action="./reserve.jsp?no=<%=facility.getFacilityNo() %>" method="post" class="d-grid">
+                                    <button type="button" class="btn btn-outline-primary px-3 py-2" onclick="reserve()">
                                         예약하기 &raquo;
                                     </button>
                                 </form>
-                                <a href="./facilitys.jsp" class="btn btn-outline-secondary btn-lg px-4 py-2.5 fs-6" role="button">
+                                <a href="./facilitys.jsp" class="btn btn-outline-secondary px-3 py-2" role="button">
                                     &laquo; 시설 목록 돌아가기
                                 </a>
                             </div>

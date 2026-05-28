@@ -3,7 +3,7 @@ package dto;
 import java.io.Serializable;
 
 public class UserDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3L;
 
     private String userId; // 회원 아이디(PK)
     private String userPw; // 비밀번호

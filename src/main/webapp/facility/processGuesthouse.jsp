@@ -1,10 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8" %>
-<%@ page import="dto.ReserveDTO" %>
-<%@ page import="dao.ReserveDAO" %>
-<%@ page import="dto.FacilityDTO" %>
-<%@ page import="dao.FacilityDAO" %>
+<%@ page import="dto.ReserveDTO, dao.ReserveDAO" %>
+<%@ page import="dto.FacilityDTO, dao.FacilityDAO" %>
 <%@ page import="java.util.ArrayList" %>
-
 <%
     request.setCharacterEncoding("utf-8");
 
@@ -17,7 +14,7 @@
 
     ReserveDAO reserveDAO = ReserveDAO.getInstance();
     FacilityDAO facilityDAO = FacilityDAO.getInstance();
-    
+
     FacilityDTO facility = facilityDAO.getFacilityDTOByNo(facilityNo);
     int maxPeople = (facility != null) ? facility.getPeopleInStock() : 0; 
 
