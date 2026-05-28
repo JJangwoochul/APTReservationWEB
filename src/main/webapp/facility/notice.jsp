@@ -106,8 +106,14 @@
             </tbody>
         </table>
 
-        <div class="text-end">
+       <%-- (1) 수정: 버튼 영역에 관리자 권한 체크 로직 추가 --%>
+        <div class="d-flex justify-content-between">
             <button type="button" class="btn btn-light-custom" onclick="location.href='<%= request.getContextPath() %>/facility/welcome.jsp'">이전 페이지로</button>
+            
+            <%-- (2) 추가: ADMIN 권한을 가진 경우에만 '공지사항 등록' 버튼 노출 --%>
+            <% if ("ADMIN".equals(session.getAttribute("sessionRole"))) { %>
+                <button type="button" class="btn btn-dark" onclick="location.href='<%= request.getContextPath() %>/facility/admin_notice_write.jsp'">공지사항 등록</button>
+            <% } %>
         </div>
     </div>
 </div>

@@ -99,7 +99,14 @@
         </div>
 
         <div class="text-end">
-            <button type="button" class="btn btn-light-custom" onclick="location.href='<%= request.getContextPath() %>/notice.jsp'">이전 페이지로</button>
+            <button type="button" class="btn btn-light-custom" onclick="location.href='<%= request.getContextPath() %>/facility/notice.jsp'">돌아가기</button>
+    
+             <%-- 관리자일 경우에만 수정/삭제 버튼 노출 --%>
+             <% if ("ADMIN".equals(session.getAttribute("sessionRole"))) { %>
+              <button type="button" class="btn btn-outline-warning" onclick="location.href='admin_notice_edit.jsp?id=<%= noticeId %>'">수정</button>
+              <%-- (4) 삭제 버튼: confirm 창으로 한 번 더 확인 --%>
+              <button type="button" class="btn btn-outline-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) location.href='admin_notice_delete_process.jsp?id=<%= noticeId %>'">삭제</button>
+            <% } %>
         </div>
         
     </div>

@@ -1,5 +1,9 @@
 <%@ page contentType="text/html; charset=utf-8" %>
-
+<!-- 0528 추가코드 세션에서 권한정보 가져오기-->
+<%
+    String sessionId = (String) session.getAttribute("sessionId");
+    String role = (String) session.getAttribute("sessionRole");
+%>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <div class="container">
@@ -27,6 +31,15 @@
         <li class="nav-item">
             <span class="nav-link text-dark me-2"><strong><%= session.getAttribute("sessionId") %></strong>님</span>
         </li>
+
+        <%-- 0528코드수정 : ADMIN 만 보이는 네비버튼 --%>
+        <%-- 관리자만 시스템 회원 목록을 조회하거나 수정할 수 있는 페이지로 진입하기 위함 --%>
+        <% if ("ADMIN".equals(role)) { %>
+            <li class="nav-item">
+                <button class="btn btn-outline-danger me-2" onclick="location.href='<%= request.getContextPath() %>/facility/admin_memberList.jsp'">회원관리</button>
+            </li>
+        <% } %>
+        <%-- 관리자 , 유저 모두 보이는 네비--%>
         <li class="nav-item">
             <button class="btn btn-outline-dark me-2" onclick="location.href='<%= request.getContextPath() %>/facility/logout_process.jsp'">로그아웃</button>
         </li>
@@ -36,5 +49,4 @@
     <% } %>
     </ul>
 </header>
-
 </div>

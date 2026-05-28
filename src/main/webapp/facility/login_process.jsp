@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=utf-8" %>
 <%@ page import="dao.UserDAO" %>
+<%@ page import="dto.UserDTO" %> <%--0528 추가코드--%>
 <%
     request.setCharacterEncoding("utf-8");
 
@@ -13,15 +14,19 @@
     }
 
     UserDAO dao = new UserDAO();
-    int result = dao.login(userId, userPw);
+    //0528수정코드 : 객체반환
+    UserDTO loginUser = dao.login(userId, userPw);
 
-    // (3) 결과에 따른 처리
-    if (result == 1) {
-        session.setAttribute("sessionId", userId);
+    // 0528 수정코드 : 객체가 null이 아닐 시 성공
+    if (loginUser != null) {
+        // 세션에 아이디 , UserDTO 객체 전체와 권한을 저장
+        session.setAttribute("sessionId", loginUser.getUserId());
+        session.setAttribute("sessionUser", loginUser); // 객체 전체 저장
+        session.setAttribute("sessionRole", loginUser.getRole()); // 권한을 별도로 저장하여 관리
+        
         response.sendRedirect(request.getContextPath() + "/facility/welcome.jsp");
-    } else if (result == 0) {
-        out.println("<script>alert('비밀번호가 일치하지 않습니다.'); history.back();</script>");
     } else {
-        out.println("<script>alert('존재하지 않는 아이디입니다.'); history.back();</script>");
+        // 0528 수정코드 : 로그인 실패 시 로직
+        out.println("<script>alert('아이디 또는 비밀번호가 일치하지 않습니다.'); history.back();</script>");
     }
 %>
