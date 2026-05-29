@@ -56,6 +56,7 @@
 <div class="signup-container">
     <div class="signup-box">
         <div class="signup-title">회원가입</div>
+        <%--회원가입 -> 프로세스 파일로 데이터 전송--%>
         <form action="<%= request.getContextPath() %>/facility/signUp_process.jsp" method="post">
             <div class="mb-4">
                 <label for="userName" class="form-label fw-bold">name</label>

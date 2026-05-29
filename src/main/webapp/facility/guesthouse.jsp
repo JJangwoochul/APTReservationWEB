@@ -7,7 +7,8 @@
     int no = (noParam != null && !noParam.isEmpty()) ? Integer.parseInt(noParam) : 0;
 
     FacilityDAO dao = FacilityDAO.getInstance();
-    FacilityDTO facility = dao.getFacilityDTOByNo(no);
+    // 메서드 이름을 getFacilityByNo로 통일했습니다.
+    FacilityDTO facility = dao.getFacilityByNo(no); 
     
     if (facility == null) {
         response.sendRedirect("facilitys.jsp");
@@ -19,41 +20,35 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <title>게스트하우스 예약하기</title>
 <script type="text/javascript">
-        function reserve() {
+    function reserve() {
         var form = document.reserveForm;
-
         if (form.reserveDate.value == "") {
             alert("체크인 날짜를 선택해주세요.");
             form.reserveDate.focus();
             return;
         }
-
         if (confirm("이 시설을 예약 하시겠습니까?")) {
             form.submit();
         }
     }
-    </script>
+</script>
 </head>
 <body class="bg-light">
 <div class="container py-4">
     <%@ include file="header.jsp"%>
 
     <div class="p-5 mb-5 bg-body-tertiary rounded-3 shadow-sm text-center">
-        <div class="container-fluid py-3">
-            <h1 class="display-5 fw-bold text-dark">게스트하우스 예약</h1>
-            <p class="lead">Guesthouse Reservation</p>
-        </div>    
+        <h1 class="display-5 fw-bold text-dark">게스트하우스 예약</h1>
+        <p class="lead">Guesthouse Reservation</p>
     </div>
 
     <div class="row justify-content-center my-4">
         <div class="col-lg-10">
             <div class="card shadow-sm border-0 overflow-hidden rounded-3">
                 <div class="row g-0 align-items-stretch">
-                    
                     <div class="col-md-5 bg-dark d-flex align-items-center justify-content-center" style="min-height: 400px;">
                         <img src="/aptweb/resources/images/<%=facility.getFileName() %>" 
-                             class="img-fluid" style="height: 100%; width: 100%; object-fit: cover; max-height: 500px;" 
-                             alt="<%=facility.getFacilityName()%>" />
+                             class="img-fluid" style="height: 100%; width: 100%; object-fit: cover;" alt="<%=facility.getFacilityName()%>" />
                     </div>
                     
                     <div class="col-md-7 d-flex align-items-center">
@@ -73,7 +68,7 @@
 
                                 <div class="mb-4">
                                     <label class="form-label fw-bold text-secondary">숙박 기간</label>
-                                    <select name="stayDays" class="form-select form-select-lg" required>
+                                    <select name="stayDays" class="form-select form-select-lg">
                                         <option value="1">1박 2일</option>
                                         <option value="2">2박 3일</option>
                                         <option value="3">3박 4일</option>
@@ -85,7 +80,7 @@
                                     <button type="button" class="btn btn-outline-primary px-3 py-2" onclick="reserve()">
                                         예약하기 &raquo;
                                     </button>
-                                    <a href="./facilitys.jsp" class="btn btn-outline-secondary px-3 py-2" role="button">
+                                    <a href="./facilitys.jsp" class="btn btn-outline-secondary px-3 py-2">
                                         &laquo; 시설 목록 돌아가기
                                     </a>
                                 </div>

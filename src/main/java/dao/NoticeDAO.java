@@ -1,45 +1,79 @@
 package dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import dto.NoticeDTO;
-
+// DB연동 , 공지사항 목록 확인 , 상세페이지 , 조회수 증가 확인
 public class NoticeDAO {
 
-    // (1) 목록 조회 기능
+    // (1) 목록 조회: SELECT 이용
+    // notice테이블에서 모든 데이터를 가져온 뒤 , 리스트로 반환시킴
     public List<NoticeDTO> getNoticeList() {
         List<NoticeDTO> list = new ArrayList<>();
+        // 최신 글이 위로 오도록 noticeNo 기준 DESC(내림차순) 정렬합니다.
+        String sql = "SELECT * FROM notice ORDER BY noticeNo DESC";
 
-        //공지사항 1
-        NoticeDTO n1 = new NoticeDTO();
-        n1.setNoticeId(1);
-        n1.setTitle("아파트 공지사항 테스트입니다.");
-        n1.setContent("현재 가짜 데이터를 사용하여 목록을 불러오는 중입니다.");
-        n1.setupLoadDate(new Date());
+        try (Connection conn = DBconn.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
 
-        //공지사항 2
-        NoticeDTO n2 = new NoticeDTO();
-        n2.setNoticeId(2);
-        n2.setTitle("시스템 점검 안내");
-        n2.setContent("내일 오전 2시부터 시스템 점검이 있습니다.");
-        n2.setupLoadDate(new Date());
-
-        list.add(n1);
-        list.add(n2);
-
+            while (rs.next()) {
+                list.add(new NoticeDTO(
+                        rs.getInt("noticeNo"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getInt("writerNo"),
+                        rs.getInt("hit"),
+                        rs.getDate("reg_date")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return list;
     }
-
-    // (2) 상세 조회 기능
+    // (2)상세 조회: SELECT 이용
+    // 특정 ID를 가진 글을 상세히 가져옴 (공지사항 제목 클릭 시)
     public NoticeDTO getNotice(int noticeId) {
-        // 특정 ID에 해당하는 가상의 데이터 생성
-        NoticeDTO notice = new NoticeDTO();
-        notice.setNoticeId(noticeId);
-        notice.setTitle("상세보기 테스트 글 번호: " + noticeId);
-        notice.setContent("이 글은 상세 조회 기능을 테스트하기 위한 가짜 데이터입니다.");
-        notice.setupLoadDate(new Date());
-        
-        return notice;
+        String sql = "SELECT * FROM notice WHERE noticeNo = ?";
+
+        try (Connection conn = DBconn.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, noticeId); // ?에 noticeId 값을 매핑
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    // 데이터베이스에서 값을 꺼내 DTO 전체 생성자로 객체를 생성하여 반환합니다.
+                    return new NoticeDTO(
+                            rs.getInt("noticeNo"),
+                            rs.getString("title"),
+                            rs.getString("content"),
+                            rs.getInt("writerNo"),
+                            rs.getInt("hit"),
+                            rs.getDate("reg_date"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null; // 글이 없으면 null 반환
+    }
+
+    //(3) 조회수 증가: UPDATE 이용
+    // User가 게시글 클릭했을 시 조회수 1 증가
+    public void incrementHit(int noticeId) {
+        String sql = "UPDATE notice SET hit = hit + 1 WHERE noticeNo = ?";
+
+        try (Connection conn = DBconn.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, noticeId);
+            pstmt.executeUpdate(); // DB의 데이터를 수정하는 쿼리 실행
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

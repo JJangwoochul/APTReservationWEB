@@ -1,57 +1,146 @@
 package dao;
 
+import java.sql.*;
 import java.util.ArrayList;
 import dto.FacilityDTO;
 
 public class FacilityDAO {
-    
-    private ArrayList<FacilityDTO> listOfFacilityDTOs = new ArrayList<FacilityDTO>();
 
-    private static FacilityDAO instance= new FacilityDAO();
+    private static FacilityDAO instance = new FacilityDAO();
+    public static FacilityDAO getInstance() { return instance; }
+    private FacilityDAO() {}
 
-    public static FacilityDAO getInstance() {
-        return instance;
-    }
-    
-    public FacilityDAO() {
-        FacilityDTO facilityDTO1 = new FacilityDTO(1, "헬스장", 1000);
-        facilityDTO1.setDescription("사설 헬스장보다 이용료가 훨씬 저렴하지만 아파트 입주민만 사용할 수 있는 단지 내에 마련된 헬스장 입니다.");
-        facilityDTO1.setCondition("정상 운영");
-        facilityDTO1.setPeopleInStock(20);
-        facilityDTO1.setFileName("facility01.jpg");
-
-        FacilityDTO facilityDTO2 = new FacilityDTO(2, "독서실", 1000);
-        facilityDTO2.setDescription("사설 독서실보다 이용료가 훨씬 저렴하지만 아파트 입주민만 사용할 수 있는 단지 내에 마련된 독서실 입니다.");
-        facilityDTO2.setCondition("정상 운영");
-        facilityDTO2.setPeopleInStock(30);
-        facilityDTO2.setFileName("facility02.jpg");
-
-        FacilityDTO facilityDTO3 = new FacilityDTO(3, "게스트하우스", 10000);
-        facilityDTO3.setDescription("입주민의 친척이나 지인이 방문했을 때 저렴한 비용으로 편안하게 머무를 수 있도록 단지 내에 마련된 숙박 시설입니다.");
-        facilityDTO3.setCondition("정상 운영");
-        facilityDTO3.setPeopleInStock(10);
-        facilityDTO3.setFileName("facility03.jpg");
-
-        listOfFacilityDTOs.add(facilityDTO1);
-        listOfFacilityDTOs.add(facilityDTO2);
-        listOfFacilityDTOs.add(facilityDTO3);
-    }
-    public ArrayList<FacilityDTO> getAllFacility() {
-        return listOfFacilityDTOs;
-    }
-    public FacilityDTO getFacilityDTOByNo(int facilityNo) {
-        if (listOfFacilityDTOs != null) {
-            for (int i = 0; i < listOfFacilityDTOs.size(); i++) {
-                FacilityDTO facilityDTO = listOfFacilityDTOs.get(i);   
+    // 1. 전체 목록 조회
+    public ArrayList<FacilityDTO> getAllFacility() throws SQLException {
+        ArrayList<FacilityDTO> list = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT * FROM facility";
         
-                if (facilityDTO != null && facilityDTO.getFacilityNo() == facilityNo) {
-                    return facilityDTO; 
-                }
+        try {
+            conn = DBconn.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                FacilityDTO dto = new FacilityDTO();
+                dto.setFacilityNo(rs.getInt("facilityNo"));
+                dto.setFacilityName(rs.getString("facilityName"));
+                dto.setDescription(rs.getString("description"));
+                dto.setFacilityPrice(rs.getInt("facilityPrice"));
+                dto.setCondition(rs.getString("condition"));
+                dto.setPeopleInStock(rs.getInt("peopleInStock"));
+                dto.setFileName(rs.getString("fileName"));
+                dto.setQuantity(rs.getInt("quantity"));
+                list.add(dto);
             }
+        } finally {
+            if (rs != null) rs.close();
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
         }
-        return null;
+        return list;
     }
-    public void addFacility(FacilityDTO facilityDTO) {
-        listOfFacilityDTOs.add(facilityDTO);
+
+    // 2. 신규 등록
+    public void addFacility(FacilityDTO dto) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        String sql = "INSERT INTO facility (facilityNo, facilityName, description, facilityPrice, condition, peopleInStock, fileName, quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try {
+            conn = DBconn.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, dto.getFacilityNo());
+            pstmt.setString(2, dto.getFacilityName());
+            pstmt.setString(3, dto.getDescription());
+            pstmt.setInt(4, dto.getFacilityPrice());
+            pstmt.setString(5, dto.getCondition());
+            pstmt.setInt(6, dto.getPeopleInStock());
+            pstmt.setString(7, dto.getFileName());
+            pstmt.setInt(8, dto.getQuantity());
+            
+            pstmt.executeUpdate();
+        } finally {
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        }
+    }
+
+    // 3. 특정 시설 조회 (수정 화면용)
+    public FacilityDTO getFacilityByNo(int facilityNo) throws SQLException {
+        FacilityDTO dto = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT * FROM facility WHERE facilityNo = ?";
+        
+        try {
+            conn = DBconn.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, facilityNo);
+            rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                dto = new FacilityDTO();
+                dto.setFacilityNo(rs.getInt("facilityNo"));
+                dto.setFacilityName(rs.getString("facilityName"));
+                dto.setDescription(rs.getString("description"));
+                dto.setFacilityPrice(rs.getInt("facilityPrice"));
+                dto.setCondition(rs.getString("condition"));
+                dto.setPeopleInStock(rs.getInt("peopleInStock"));
+                dto.setFileName(rs.getString("fileName"));
+                dto.setQuantity(rs.getInt("quantity"));
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        }
+        return dto;
+    }
+
+    // 4. 시설 정보 수정
+    public void updateFacility(FacilityDTO dto) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        String sql = "UPDATE facility SET facilityName=?, description=?, facilityPrice=?, condition=?, " +
+                     "peopleInStock=?, fileName=?, quantity=? WHERE facilityNo=?";
+        
+        try {
+            conn = DBconn.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, dto.getFacilityName());
+            pstmt.setString(2, dto.getDescription());
+            pstmt.setInt(3, dto.getFacilityPrice());
+            pstmt.setString(4, dto.getCondition());
+            pstmt.setInt(5, dto.getPeopleInStock());
+            pstmt.setString(6, dto.getFileName());
+            pstmt.setInt(7, dto.getQuantity());
+            pstmt.setInt(8, dto.getFacilityNo());
+            
+            pstmt.executeUpdate();
+        } finally {
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        }
+    }
+    
+    // 5. 삭제
+    public void deleteFacility(int facilityNo) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        String sql = "DELETE FROM facility WHERE facilityNo = ?";
+        
+        try {
+            conn = DBconn.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, facilityNo);
+            pstmt.executeUpdate();
+        } finally {
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        }
     }
 }
