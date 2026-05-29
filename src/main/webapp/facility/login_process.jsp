@@ -28,6 +28,9 @@
         session.setAttribute("sessionId", loginUser.getUserId());
         session.setAttribute("sessionUser", loginUser); // 객체 전체를 담아두면 어디서든 정보 활용 가능
         session.setAttribute("sessionRole", loginUser.getRole()); // 권한 확인용 세션
+
+        // 예약 기능에서 사용할 userNo 세션 추가 저장(민관 추가)
+        session.setAttribute("userNo", loginUser.getUserNo());
         
         // 메인 페이지로 이동
         response.sendRedirect(request.getContextPath() + "/facility/welcome.jsp");

@@ -25,6 +25,11 @@ CREATE SEQUENCE notice_seq START WITH 1 INCREMENT BY 1;
 -- 회원 번호용 시퀀스
 CREATE SEQUENCE user_seq START WITH 1 INCREMENT BY 1;
 
+-- 시설 번호 시퀀스
+CREATE SEQUENCE facility_seq START WITH 4 INCREMENT BY 1;
+
+-- 예약 번호 시퀀스
+CREATE SEQUENCE reserve_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE reserve (
     reserveNo       NUMBER PRIMARY KEY,

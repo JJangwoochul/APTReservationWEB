@@ -6,7 +6,7 @@
     // 로그인 체크 로직
     Integer userNo = (Integer) session.getAttribute("userNo");
     if (userNo == null) {
-        response.sendRedirect("./login.jsp");
+        response.sendRedirect("/login.jsp");
         return;
     }
     request.setCharacterEncoding("utf-8");

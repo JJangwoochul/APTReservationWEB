@@ -15,7 +15,7 @@
     ReserveDAO reserveDAO = ReserveDAO.getInstance();
     FacilityDAO facilityDAO = FacilityDAO.getInstance();
 
-    FacilityDTO facility = facilityDAO.getFacilityDTOByNo(facilityNo);
+    FacilityDTO facility = facilityDAO.getFacilityByNo(facilityNo);
     int maxPeople = (facility != null) ? facility.getPeopleInStock() : 0; 
 
     int currentReservedCount = 0;
@@ -40,7 +40,6 @@
     }
 
     ReserveDTO newReserve = new ReserveDTO();
-    newReserve.setReserveNo(allReserves != null ? allReserves.size() + 1 : 1);
     newReserve.setFacilityNo(facilityNo);
     newReserve.setUserNo(userNo);
     newReserve.setReserveDate(reserveDate);

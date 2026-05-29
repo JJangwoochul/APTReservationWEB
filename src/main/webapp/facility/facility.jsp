@@ -7,9 +7,9 @@
     Integer userNo = (Integer) session.getAttribute("userNo");
 
     // 로그인 정보가 없으면 로그인 페이지로 보냅니다.
-    if (userNo == null) {
-        response.sendRedirect("./login.jsp"); // 로그인 페이지 경로
-        return; // 아래 코드가 실행되지 않도록 여기서 중단합니다.
+    if (session.getAttribute("sessionId") == null) {
+        response.sendRedirect(request.getContextPath() + "/facility/login.jsp");
+        return;
     }
 %>
 <html>

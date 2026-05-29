@@ -9,8 +9,8 @@
     FacilityDAO dao = FacilityDAO.getInstance();
     FacilityDTO facility = dao.getFacilityByNo(no); 
     
-    if (facility == null) {
-        response.sendRedirect("facilitys.jsp");
+    if (session.getAttribute("sessionId") == null) {
+        response.sendRedirect(request.getContextPath() + "/facility/login.jsp");
         return;
     }
 %>
