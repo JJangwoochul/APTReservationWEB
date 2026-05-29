@@ -5,7 +5,8 @@ import java.io.Serializable;
 public class UserDTO implements Serializable {
     private static final long serialVersionUID = 3L;
 
-    private String userId; // 회원 아이디(PK)
+    private int userNo; // 0529 수정코드 : userNo (유저테이블의 pk)
+    private String userId; // 회원 아이디
     private String userPw; // 비밀번호
     private String userName; // 이름
     private String phone; // 연락처
@@ -21,31 +22,24 @@ public class UserDTO implements Serializable {
         this.role = "USER";
     }
 
-    // 로그인/인증용 생성자
-    public UserDTO(String userId, String userPw) {
+    public UserDTO(int userNo, String userId, String userPw, String userName, String phone, int dong, int ho,
+            String role) {
+        this.userNo = userNo;
         this.userId = userId;
         this.userPw = userPw;
-    }
-
-    // 회원가입 입력용 생성자 (이름, 연락처 포함)
-    public UserDTO(String userId, String userPw, String userName, String phone) {
-        this(userId, userPw);
         this.userName = userName;
         this.phone = phone;
-    }
-
-    // 0528 추가코드 : 마이페이지 정보 수정/조회 , 관리자페이지에서 회원목록 출력
-    public UserDTO(String userId, String userPw, String userName, String phone, int dong, int ho) {
-        this(userId, userPw, userName, phone);
         this.dong = dong;
         this.ho = ho;
-        this.role = "USER";
+        this.role = role;
     }
 
-    // 0528 추가코드 : 관리자가 회원 권한변경 , 시스템에서 admin권한 객체를 다룰때
-    public UserDTO(String userId, String userPw, String userName, String phone, int dong, int ho, String role) {
-        this(userId, userPw, userName, phone, dong, ho);
-        this.role = role;
+    public int getUserNo() {
+        return userNo;
+    }
+
+    public void setUserNo(int userNo) {
+        this.userNo = userNo;
     }
 
     public String getUserId() {
@@ -103,4 +97,5 @@ public class UserDTO implements Serializable {
     public void setRole(String role) {
         this.role = role;
     }
+
 }

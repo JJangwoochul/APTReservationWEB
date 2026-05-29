@@ -28,12 +28,12 @@ public class UserDAO {
         // 관리자 아이디 로그인 시 사용
         if (userId.equals(mockAdminId) && userPw.equals(mockAdminPw)) {
             // ADMIN 권한을 가진 객체 생성
-            return new UserDTO(userId, userPw, "관리자", "010-0000-0000", 0, 0, "ADMIN");
+            return new UserDTO(1,userId, userPw, "관리자", "010-0000-0000", 0, 0, "ADMIN");
         }
         // 일반 사용자 아이디 로그인 시
         else if (userId.equals(mockUserId) && userPw.equals(mockUserPw)) {
             // USER 권한을 가진 객체 생성 (기본값 설정)
-            return new UserDTO(userId, userPw, "테스트유저", "010-1234-5678", 101, 1001, "USER");
+            return new UserDTO(2,userId, userPw, "테스트유저", "010-1234-5678", 101, 1001, "USER");
         }
         // 로그인 실패
         else {
@@ -46,9 +46,9 @@ public class UserDAO {
         List<UserDTO> list = new ArrayList<UserDTO>();
 
         // (3) 추가 : 테스트용 회원 데이터 생성
-        list.add(new UserDTO("user01", "1111", "홍길동", "010-1111-1111", 102, 1002, "USER"));
-        list.add(new UserDTO("admin", "admin1234", "관리자", "010-0000-0000", 0, 0, "ADMIN"));
-        list.add(new UserDTO("user02", "2222", "김철수", "010-2222-2222", 103, 1003, "USER"));
+        list.add(new UserDTO(3,"user01", "1111", "홍길동", "010-1111-1111", 102, 1002, "USER"));
+        list.add(new UserDTO(1,"admin", "admin1234", "관리자", "010-0000-0000", 0, 0, "ADMIN"));
+        list.add(new UserDTO(4,"user02", "2222", "김철수", "010-2222-2222", 103, 1003, "USER"));
 
         return list; // (4) 완성된 회원 목록 리스트 반환
     }
