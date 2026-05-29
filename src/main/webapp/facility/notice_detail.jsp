@@ -3,13 +3,22 @@
 <%@ page import="dao.NoticeDAO" %>
 <%@ page import="dto.NoticeDTO" %>
 <%
-    // (1) 파라미터 받기 및 데이터 조회
+// 공지사항 상세보기 확인
+
+    // 파라미터 받기 및 데이터 조회
+    //id가 null이면 잘못된접근 메세지 출력 (보안강화)
     String idParam = request.getParameter("id");
-    int noticeId = (idParam != null) ? Integer.parseInt(idParam) : 1; // 파라미터가 없으면 1번 글 표시
-    
+    if (idParam == null || idParam.trim().isEmpty()) {
+        out.println("<script>alert('잘못된 접근입니다.'); history.back();</script>");
+        return; // 아래의 DB 로직이 실행전 중단
+    }
+    int noticeId = Integer.parseInt(idParam);
+    // 상세페이지에 들어올 떄 DB에서 조회수 업데이트
     NoticeDAO dao = new NoticeDAO();
-    NoticeDTO notice = dao.getNotice(noticeId); // 해당 ID의 데이터를 DAO에서 가져옴
-    // (2) null 체크 보완: 데이터가 없을 경우 이전 페이지로 이동
+    dao.incrementHit(noticeId);
+    // 게시글 조회
+    NoticeDTO notice = dao.getNotice(noticeId);
+    // null 체크 보완: 데이터가 없을 경우 이전 페이지로 이동
     if (notice == null) {
         out.println("<script>alert('존재하지 않는 공지사항입니다.'); history.back();</script>");
         return;
@@ -104,7 +113,7 @@
              <%-- 관리자일 경우에만 수정/삭제 버튼 노출 --%>
              <% if ("ADMIN".equals(session.getAttribute("sessionRole"))) { %>
               <button type="button" class="btn btn-outline-warning" onclick="location.href='admin_notice_edit.jsp?id=<%= noticeId %>'">수정</button>
-              <%-- (4) 삭제 버튼: confirm 창으로 한 번 더 확인 --%>
+              <%-- 삭제 버튼: confirm 창으로 한 번 더 확인 --%>
               <button type="button" class="btn btn-outline-danger" onclick="if(confirm('정말 삭제하시겠습니까?')) location.href='admin_notice_delete_process.jsp?id=<%= noticeId %>'">삭제</button>
             <% } %>
         </div>

@@ -1,55 +1,82 @@
 package dao;
 
 import dto.UserDTO;
-//0528 코드수정 : 리스트사용
-import java.util.ArrayList; 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
-
+// 로그인 확인 , 어드민 권한 확인
 public class UserDAO {
 
-    // (1) 실제 DB 연동을 위한 메서드 (현재는 껍데기)
+    // (1) 회원가입: DB INSERT 구현 회원가입 성공시 1 반환, 실패시 0반환
     public int join(UserDTO user) {
         int result = 0;
-        // TODO: DB 연동 시 INSERT 쿼리 구현
+        //user_seq.nextval을 이용해 PK인 No를 DB에서 자동생성
+        String sql = "INSERT INTO users (userNo, userId, userPw, userName, phone, dong, ho, role) VALUES (user_seq.nextval, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = DBconn.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, user.getUserId());
+            pstmt.setString(2, user.getUserPw());
+            pstmt.setString(3, user.getUserName());
+            pstmt.setString(4, user.getPhone());
+            pstmt.setInt(5, user.getDong());
+            pstmt.setInt(6, user.getHo());
+            pstmt.setString(7, user.getRole());
+            
+            result = pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return result;
     }
 
-    // 0528 코드수정 : 타입을 int에서 userDTO로 변경 /로그인테스트
-    // 로그인 성공 시 유저정보를 반환해 세션관리를 위해
+    // (2) 로그인: DB SELECT 구현
+    // 일치하는 회원이 있으면 UserDTO 객체반환 없으면 null값을 반환시킴
     public UserDTO login(String userId, String userPw) {
+        String sql = "SELECT * FROM users WHERE userId = ? AND userPw = ?";
         
-        // 테스트용 데이터 db연동시 변경
-        String mockUserId = "test";
-        String mockUserPw = "12345";
-        String mockAdminId = "admin";
-        String mockAdminPw = "admin1234";
-
-        // 0528 코드수정 : 로그인 로직에서 권한을 구분하여 반환
-        // 관리자 아이디 로그인 시 사용
-        if (userId.equals(mockAdminId) && userPw.equals(mockAdminPw)) {
-            // ADMIN 권한을 가진 객체 생성
-            return new UserDTO(1,userId, userPw, "관리자", "010-0000-0000", 0, 0, "ADMIN");
+        try (Connection conn = DBconn.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, userId);
+            pstmt.setString(2, userPw);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {    //로그인 성공했을 때 데이터가 1개만 반환
+                    //DB에서 가져온 데이터를 UserDTO객체로 변환시킴
+                    return new UserDTO(rs.getInt("userNo"), rs.getString("userId"), rs.getString("userPw"),
+                                       rs.getString("userName"), rs.getString("phone"), rs.getInt("dong"),
+                                       rs.getInt("ho"), rs.getString("role"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        // 일반 사용자 아이디 로그인 시
-        else if (userId.equals(mockUserId) && userPw.equals(mockUserPw)) {
-            // USER 권한을 가진 객체 생성 (기본값 설정)
-            return new UserDTO(2,userId, userPw, "테스트유저", "010-1234-5678", 101, 1001, "USER");
-        }
-        // 로그인 실패
-        else {
-            return null; // 아이디가 없거나 비밀번호가 틀림
-        }
+        return null;    //일치하는 회원이 없어 객체변환이 없으면 null리턴후 로그인실패알림
     }
-    // 0528 코드수정 : Mock 데이터 회원 목록 반환 메서드 / 관리자페이지 테스트
-    // DB 연동 전까지 관리자 페이지에서 회원 목록 조회 기능을 테스트하기 위함
+
+    // (3) 회원 목록 조회: 전체 회원 SELECT 구현
+    // 전체 회원 목록을 리스트로 반환
     public List<UserDTO> getMemberList() {
-        List<UserDTO> list = new ArrayList<UserDTO>();
-
-        // (3) 추가 : 테스트용 회원 데이터 생성
-        list.add(new UserDTO(3,"user01", "1111", "홍길동", "010-1111-1111", 102, 1002, "USER"));
-        list.add(new UserDTO(1,"admin", "admin1234", "관리자", "010-0000-0000", 0, 0, "ADMIN"));
-        list.add(new UserDTO(4,"user02", "2222", "김철수", "010-2222-2222", 103, 1003, "USER"));
-
-        return list; // (4) 완성된 회원 목록 리스트 반환
+        List<UserDTO> list = new ArrayList<>();
+        //PK인 userNo기준으로 DESC(내림차순) 정렬 ->최신회원부터 출력됨
+        String sql = "SELECT * FROM users ORDER BY userNo DESC";
+        
+        try (Connection conn = DBconn.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                list.add(new UserDTO(rs.getInt("userNo"), rs.getString("userId"), rs.getString("userPw"),
+                                     rs.getString("userName"), rs.getString("phone"), rs.getInt("dong"),
+                                     rs.getInt("ho"), rs.getString("role")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

@@ -19,7 +19,11 @@ CREATE TABLE users (
     role        VARCHAR2(20) DEFAULT 'USER', -- 'USER' 또는 'ADMIN' 구분
     reg_date    TIMESTAMP DEFAULT CURRENT_TIMESTAMP --회원가입 날
 );
+-- 공지사항 번호용 시퀀스
+CREATE SEQUENCE notice_seq START WITH 1 INCREMENT BY 1;
 
+-- 회원 번호용 시퀀스
+CREATE SEQUENCE user_seq START WITH 1 INCREMENT BY 1;
 
 
 CREATE TABLE reserve (
