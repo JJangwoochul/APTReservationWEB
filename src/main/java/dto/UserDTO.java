@@ -21,7 +21,18 @@ public class UserDTO implements Serializable {
         // 0528 추가코드 : 기본권한을 입주민(USER)으로 설정
         this.role = "USER";
     }
-
+    //생성자 :회원가입 시 사용할 생성자 (userNo와 role 제외)
+    public UserDTO(String userId, String userPw, String userName, String phone, int dong, int ho) {
+        super();
+        this.userId = userId;
+        this.userPw = userPw;
+        this.userName = userName;
+        this.phone = phone;
+        this.dong = dong;
+        this.ho = ho;
+        this.role = "USER"; // 기본 권한 설정
+    }
+    //생성자 : 로그인 이후 , 세션저장 , 목록조회 시 사용
     public UserDTO(int userNo, String userId, String userPw, String userName, String phone, int dong, int ho,
             String role) {
         this.userNo = userNo;
