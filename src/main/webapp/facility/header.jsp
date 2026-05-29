@@ -43,6 +43,9 @@
                 <li class="nav-item">
                     <button class="btn btn-outline-danger me-2" onclick="location.href='<%= request.getContextPath() %>/facility/admin_memberList.jsp'">회원관리</button>
                 </li>
+                <li class="nav-item">
+                    <button class="btn btn-outline-danger me-2" onclick="location.href='<%= request.getContextPath() %>/facility/admin_facility.jsp'">시설관리</button>
+                </li>
             <% } %>
 
             <li class="nav-item">
