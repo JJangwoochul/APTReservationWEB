@@ -14,6 +14,13 @@ public class ReserveDTO implements Serializable {
         super();
     }
 
+    public ReserveDTO(int reserveNo, int facilityNo, int userNo, String reserveDate) {
+        this.reserveNo = reserveNo;
+        this.facilityNo = facilityNo;
+        this.userNo = userNo;
+        this.reserveDate = reserveDate;
+    }
+
     public static long getSerialversionuid() {
         return serialVersionUID;
     }

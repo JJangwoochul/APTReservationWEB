@@ -19,11 +19,6 @@
         <div class="col-md-8 bg-white p-5 rounded-3 shadow-sm border">
             <form name="newFacility" action="./processAddFacility.jsp" method="post" 
                   enctype="multipart/form-data" onsubmit="return CheckAddFacility()">
-                
-                <div class="mb-3">
-                    <label class="form-label fw-bold">고유번호</label>
-                    <input type="text" id="facilityNo" name="facilityNo" class="form-control" placeholder="숫자만 입력">
-                </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">시설명</label>
