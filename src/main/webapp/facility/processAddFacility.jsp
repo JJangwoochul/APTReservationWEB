@@ -16,7 +16,6 @@
     }
 
     // 2. 파라미터 수집
-    String facilityNo = request.getParameter("facilityNo");
     String facilityName = request.getParameter("facilityName");
     String description = request.getParameter("description");
     String facilityPrice = request.getParameter("facilityPrice");
@@ -24,7 +23,6 @@
     String peopleInStock = request.getParameter("peopleInStock");
 
     // 3. 숫자형 데이터 변환
-    int no = (facilityNo != null && !facilityNo.isEmpty()) ? Integer.parseInt(facilityNo) : 0;
     int price = (facilityPrice != null && !facilityPrice.isEmpty()) ? Integer.parseInt(facilityPrice) : 0;
     int stock = (peopleInStock != null && !peopleInStock.isEmpty()) ? Integer.parseInt(peopleInStock) : 0;
 
@@ -36,23 +34,21 @@
         part.write(realFolder + File.separator + fileName);
     }
 
-    // 5. DTO 객체 생성 및 값 설정 (Setter 방식)
+    // 5. DTO 객체 생성 및 값 설정
     FacilityDTO dto = new FacilityDTO();
-    dto.setFacilityNo(no);
     dto.setFacilityName(facilityName);
     dto.setDescription(description);
     dto.setFacilityPrice(price);
     dto.setCondition(condition);
     dto.setPeopleInStock(stock);
     dto.setFileName(fileName);
-    dto.setQuantity(stock); // 초기 잔여 수량은 재고와 동일하게 설정
+    dto.setQuantity(stock); 
 
-    // 6. DB 저장 (DAO 호출) 및 결과 처리
+    // 6. DB 저장 (DAO 호출)
     try {
         FacilityDAO dao = FacilityDAO.getInstance();
-        dao.addFacility(dto);
+        dao.addFacility(dto); // DAO 내부 SQL에서 facility_seq.NEXTVAL이 실행됨
         
-        // 성공 시 목록 페이지로 이동 (새로고침 시 중복 저장 방지)
         response.sendRedirect("facilitys.jsp");
     } catch (SQLException e) {
         e.printStackTrace();

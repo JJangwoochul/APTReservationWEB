@@ -9,18 +9,23 @@
     request.setCharacterEncoding("utf-8");
 
     String facilityNoParam = request.getParameter("facilityNo");
-    String userNoParam = request.getParameter("userNo");
+    Integer userNo = (Integer) session.getAttribute("userNo"); 
     String reserveDate = request.getParameter("reserveDate");
 
+    if (userNo == null) {
+        out.println("<script>alert('로그인이 필요합니다.'); location.href='../login/login.jsp';</script>");
+        return;
+    }
+
     int facilityNo = (facilityNoParam != null && !facilityNoParam.isEmpty()) ? Integer.parseInt(facilityNoParam) : 0;
-    int userNo = (userNoParam != null && !userNoParam.isEmpty()) ? Integer.parseInt(userNoParam) : 0;
 
     ReserveDAO reserveDAO = ReserveDAO.getInstance();
     FacilityDAO facilityDAO = FacilityDAO.getInstance();
-    
-    FacilityDTO facility = facilityDAO.getFacilityDTOByNo(facilityNo);
+
+    FacilityDTO facility = facilityDAO.getFacilityByNo(facilityNo);
     int maxPeople = (facility != null) ? facility.getPeopleInStock() : 0; 
 
+    // 1. 예약 가능 여부 확인
     int currentReservedCount = 0;
     ArrayList<ReserveDTO> allReserves = reserveDAO.getAllReserves();
     
@@ -32,6 +37,7 @@
         }
     }
 
+    // 2. 정원 초과 시 예약 차단
     if (currentReservedCount >= maxPeople) {
 %>
         <script type="text/javascript">
@@ -42,8 +48,8 @@
         return; 
     }
 
+    // 3. 예약 정보 저장
     ReserveDTO newReserve = new ReserveDTO();
-    newReserve.setReserveNo(allReserves != null ? allReserves.size() + 1 : 1);
     newReserve.setFacilityNo(facilityNo);
     newReserve.setUserNo(userNo);
     newReserve.setReserveDate(reserveDate);

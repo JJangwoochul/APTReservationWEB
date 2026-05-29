@@ -6,6 +6,7 @@ import dto.FacilityDTO;
 
 public class FacilityDAO {
 
+    // 싱글톤 패턴: 단 하나의 인스턴스만 생성하여 공유
     private static FacilityDAO instance = new FacilityDAO();
     public static FacilityDAO getInstance() { return instance; }
     private FacilityDAO() {}
@@ -47,19 +48,18 @@ public class FacilityDAO {
     public void addFacility(FacilityDTO dto) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
-        String sql = "INSERT INTO facility (facilityNo, facilityName, description, facilityPrice, condition, peopleInStock, fileName, quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO facility (facilityNo, facilityName, description, facilityPrice, condition, peopleInStock, fileName, quantity) VALUES (facility_seq.NEXTVAL, ?, ?, ?, ?, ?, ?, ?)";
         
         try {
             conn = DBconn.getConnection();
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, dto.getFacilityNo());
-            pstmt.setString(2, dto.getFacilityName());
-            pstmt.setString(3, dto.getDescription());
-            pstmt.setInt(4, dto.getFacilityPrice());
-            pstmt.setString(5, dto.getCondition());
-            pstmt.setInt(6, dto.getPeopleInStock());
-            pstmt.setString(7, dto.getFileName());
-            pstmt.setInt(8, dto.getQuantity());
+            pstmt.setString(1, dto.getFacilityName());
+            pstmt.setString(2, dto.getDescription());
+            pstmt.setInt(3, dto.getFacilityPrice());
+            pstmt.setString(4, dto.getCondition());
+            pstmt.setInt(5, dto.getPeopleInStock());
+            pstmt.setString(6, dto.getFileName());
+            pstmt.setInt(7, dto.getQuantity());
             
             pstmt.executeUpdate();
         } finally {
