@@ -12,6 +12,7 @@
     <h3 class="fw-bold mb-4">시설 정보 수정</h3>
     
     <%
+    //체크완
         String fNo = request.getParameter("no");
         FacilityDAO dao = FacilityDAO.getInstance();
         FacilityDTO facility = dao.getFacilityByNo(Integer.parseInt(fNo));

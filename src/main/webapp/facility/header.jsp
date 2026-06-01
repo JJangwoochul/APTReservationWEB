@@ -3,6 +3,7 @@
 <%--로그인 상태일때 ,로그아웃했을때 확인 --%>
 
 <%
+//체크완
     //세션에서 로그인 상태,권한 정보 확인
     //세션 정보는 서버에남아있고 , 페이지 이동에도 값 유지
     String sessionId = (String) session.getAttribute("sessionId");

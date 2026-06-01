@@ -8,7 +8,7 @@
     String idParam = request.getParameter("id");
     int noticeId = (idParam != null) ? Integer.parseInt(idParam) : 0;
     
-    NoticeDAO dao = new NoticeDAO();
+    NoticeDAO dao = NoticeDAO.getInstance();
     NoticeDTO notice = dao.getNotice(noticeId); // 기존 데이터 가져오기
 
     if (notice == null) {
@@ -30,7 +30,7 @@
     <hr>
     <form action="admin_notice_edit_process.jsp" method="post">
         <%-- (2) 글 번호는 사용자에게 보이지 않게 숨김값(hidden)으로 전달 --%>
-        <input type="hidden" name="noticeId" value="<%= notice.getNoticeId() %>">
+        <input type="hidden" name="noticeId" value="<%= notice.getNoticeNo() %>">
         
         <div class="mb-3">
             <label class="form-label">제목</label>

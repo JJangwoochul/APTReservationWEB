@@ -3,40 +3,39 @@ package dto;
 import java.io.Serializable;
 import java.util.Date;
 
+// (1) DTO(Data Transfer Object): DB의 테이블과 1:1로 매핑되는 객체
 public class NoticeDTO implements Serializable {
     private static final long serialVersionUID = 4L;
 
-    private int noticeId; // 글 번호 (PK)
+    // (2) 필드명 통일: DB 컬럼명과 일치시켜 가독성 확보
+    private int noticeNo; // 글 번호 (PK)
     private String title; // 제목
     private String content; // 내용
     private int writerNo; // 작성자 번호 (FK)
     private int hit; // 조회수
-    private Date upLoadDate; // 작성일
+    private Date regDate; // 작성일
 
     public NoticeDTO() {
         super();
     }
 
-    // (3) 전체 생성자: DB에서 모든 정보를 조회할 때 사용
-    public NoticeDTO(int noticeId, String title, String content, int writerNo, int hit, Date upLoadDate) {
-        this.noticeId = noticeId;
+    // (3) 전체 생성자: DB 조회 결과(ResultSet)를 객체로 변환할 때 사용
+    public NoticeDTO(int noticeNo, String title, String content, int writerNo, int hit, Date regDate) {
+        this.noticeNo = noticeNo;
         this.title = title;
         this.content = content;
         this.writerNo = writerNo;
         this.hit = hit;
-        this.upLoadDate = upLoadDate;
+        this.regDate = regDate;
     }
 
-    public static long getSerialversionuid() {
-        return serialVersionUID;
+    // (4) Getter / Setter: 캡슐화(Encapsulation) 원칙 준수
+    public int getNoticeNo() {
+        return noticeNo;
     }
 
-    public int getNoticeId() {
-        return noticeId;
-    }
-
-    public void setNoticeId(int noticeId) {
-        this.noticeId = noticeId;
+    public void setNoticeNo(int noticeNo) {
+        this.noticeNo = noticeNo;
     }
 
     public String getTitle() {
@@ -71,11 +70,11 @@ public class NoticeDTO implements Serializable {
         this.hit = hit;
     }
 
-    public Date getupLoadDate() {
-        return upLoadDate;
+    public Date getRegDate() {
+        return regDate;
     }
 
-    public void setupLoadDate(Date upLoadDate) {
-        this.upLoadDate = upLoadDate;
+    public void setRegDate(Date regDate) {
+        this.regDate = regDate;
     }
 }

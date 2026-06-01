@@ -11,6 +11,10 @@
     String facilityNoParam = request.getParameter("facilityNo");
     Integer userNo = (Integer) session.getAttribute("userNo"); 
     String reserveDate = request.getParameter("reserveDate");
+    String useDate = request.getParameter("useDate");
+    String startTimeParam = request.getParameter("startTime");
+    String endTimeParam = request.getParameter("endTime");
+    String priceParam = request.getParameter("price");
 
     if (userNo == null) {
         out.println("<script>alert('로그인이 필요합니다.'); location.href='../login/login.jsp';</script>");
@@ -53,6 +57,11 @@
     newReserve.setFacilityNo(facilityNo);
     newReserve.setUserNo(userNo);
     newReserve.setReserveDate(reserveDate);
+    newReserve.setUseDate(request.getParameter("useDate")); // 이용일
+    newReserve.setStartTime(Integer.parseInt(request.getParameter("startTime"))); // 시작시간
+    newReserve.setEndTime(Integer.parseInt(request.getParameter("endTime"))); // 종료시간
+    newReserve.setPrice(Integer.parseInt(request.getParameter("price"))); // 가격
+    newReserve.setStatus("ACTIVE"); // 기본 상태값 설정
 
     reserveDAO.addReserve(newReserve);
 

@@ -7,7 +7,10 @@
 
     String facilityNoParam = request.getParameter("facilityNo");
     String userNoParam = request.getParameter("userNo");
-    String reserveDate = request.getParameter("reserveDate");
+    String reserveDate = request.getParameter("reserveDate"); //예약신청날
+    String useDate = request.getParameter("useDate"); // 예약신청한 날에  선택했던 체크인 날
+    String stayDays = request.getParameter("stayDays"); // 예약신청할때 머무르는 날 ( ex)1박 ,2박 )
+    String price = request.getParameter("price"); // 가격
 
     int facilityNo = (facilityNoParam != null && !facilityNoParam.isEmpty()) ? Integer.parseInt(facilityNoParam) : 0;
     int userNo = (userNoParam != null && !userNoParam.isEmpty()) ? Integer.parseInt(userNoParam) : 0;
@@ -42,7 +45,12 @@
     ReserveDTO newReserve = new ReserveDTO();
     newReserve.setFacilityNo(facilityNo);
     newReserve.setUserNo(userNo);
-    newReserve.setReserveDate(reserveDate);
+    newReserve.setReserveDate(reserveDate); //예약 신청날
+    newReserve.setUseDate(useDate);    //사용 날
+    newReserve.setStartTime(9);      // 기본 시작 시간 (예시)
+    newReserve.setEndTime(18);       // 기본 종료 시간 (예시)
+    newReserve.setPrice(Integer.parseInt(price != null ? price : "0"));
+    newReserve.setStatus("ACTIVE");
 
     reserveDAO.addReserve(newReserve);
 

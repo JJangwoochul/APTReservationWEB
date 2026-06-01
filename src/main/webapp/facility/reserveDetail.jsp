@@ -79,6 +79,8 @@
                                     <input type="hidden" name="userNo" value="<%= userNo %>">
                                     <input type="hidden" name="reserveDate" value="<%= reserveDate %>">
                                     <input type="hidden" name="stayDays" value="<%= stayDays %>">
+                                    <input type="hidden" name="useDate" value="<%= reserveDate %>">
+                                    <input type="hidden" name="price" value="<%= facility != null ? facility.getFacilityPrice() * Integer.parseInt(stayDays) : 0 %>">
                                     <button type="button" class="btn btn-dark btn-lg w-100 fw-bold shadow-sm" onclick="confirmReservation()">예약확정</button>
                                 </form>
                             <% } else { %>
@@ -87,6 +89,10 @@
                                     <input type="hidden" name="facilityNo" value="<%= facility != null ? facility.getFacilityNo() : 0 %>">
                                     <input type="hidden" name="userNo" value="<%= userNo %>">
                                     <input type="hidden" name="reserveDate" value="<%= reserveDate %>">
+                                    <input type="hidden" name="useDate" value="<%= reserveDate %>">
+                                    <input type="hidden" name="startTime" value="9">
+                                    <input type="hidden" name="endTime" value="18">
+                                    <input type="hidden" name="price" value="<%= facility != null ? facility.getFacilityPrice() : 0 %>">
                                     <button type="button" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" onclick="confirmReservation()">예약확정</button>
                                 </form>
                             <% } %>

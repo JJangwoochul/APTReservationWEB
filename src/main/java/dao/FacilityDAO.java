@@ -44,7 +44,7 @@ public class FacilityDAO {
         return list;
     }
 
-    // 2. 신규 등록
+    // 2. 신규 시설 등록
     public void addFacility(FacilityDTO dto) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;

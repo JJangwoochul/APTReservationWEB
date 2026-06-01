@@ -24,26 +24,24 @@
     <%
         request.setCharacterEncoding("utf-8");
         
-        // 1. 파라미터 및 세션 정보 확보
-        String fno = request.getParameter("no");
-        int no = (fno != null && !fno.isEmpty()) ? Integer.parseInt(fno) : 0;
-        int userNo = (session.getAttribute("userNo") != null) ? (Integer) session.getAttribute("userNo") : 0;
+        // 1. 예약 번호를 받아옵니다. (마이페이지에서 보낸 reserveNo)
+        String rNoParam = request.getParameter("reserveNo");
+        int reserveNo = (rNoParam != null && !rNoParam.isEmpty()) ? Integer.parseInt(rNoParam) : 0;
 
-        // 2. 시설 정보 조회
-        FacilityDAO dao = FacilityDAO.getInstance();
-        FacilityDTO facility = dao.getFacilityDTOByNo(no);
-
-        // 3. 내 예약 목록에서 해당 시설의 예약 번호 찾기 (DAO 수정 없이 로직 처리)
+        // 2. 예약 번호로 예약 정보(ReserveDTO)를 직접 조회
         ReserveDAO reserveDAO = ReserveDAO.getInstance();
-        ArrayList<ReserveDTO> userReserves = reserveDAO.getReservesByUser(userNo);
+        ReserveDTO reserve = reserveDAO.getReserveByNo(reserveNo); // DAO에 이 메서드가 있어야 합니다!
         
-        int targetReserveNo = 0;
-        for (ReserveDTO r : userReserves) {
-            if (r.getFacilityNo() == no) {
-                targetReserveNo = r.getReserveNo(); // 일치하는 예약 번호 추출
-                break;
-            }
+        // 만약 reserveByNo 메서드가 없으면 리스트 전체 조회 후 찾기
+        if (reserve == null) {
+            // 예약 정보가 없을 경우
+            out.println("<script>alert('잘못된 접근입니다.'); history.back();</script>");
+            return;
         }
+
+        // 3. 예약 정보에서 시설 번호를 꺼내 시설 정보 조회
+        FacilityDAO facilityDAO = FacilityDAO.getInstance();
+        FacilityDTO facility = facilityDAO.getFacilityByNo(reserve.getFacilityNo());
     %>
 
     <div class="p-5 mb-5 bg-body-tertiary rounded-3 shadow-sm text-center">
@@ -65,7 +63,7 @@
                             <p class="text-muted mb-4 lead" style="white-space: pre-wrap;"><%=facility.getDescription()%></p>
                             <hr class="my-4">
                             
-                            <form name="cancelForm" action="./processReserveCancel.jsp?reserveNo=<%= targetReserveNo %>" method="post">
+                            <form name="cancelForm" action="./processReserveCancel.jsp?reserveNo=<%= reserveNo %>" method="post">
                                 <button type="button" class="btn btn-danger px-4 py-2 fw-bold text-white" onclick="cancel()">
                                     예약취소 &raquo;
                                 </button>

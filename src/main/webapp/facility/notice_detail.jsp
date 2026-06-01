@@ -3,6 +3,7 @@
 <%@ page import="dao.NoticeDAO" %>
 <%@ page import="dto.NoticeDTO" %>
 <%
+//체크완
 // 공지사항 상세보기 확인
 
     // 파라미터 받기 및 데이터 조회
@@ -14,7 +15,7 @@
     }
     int noticeId = Integer.parseInt(idParam);
     // 상세페이지에 들어올 떄 DB에서 조회수 업데이트
-    NoticeDAO dao = new NoticeDAO();
+    NoticeDAO dao = NoticeDAO.getInstance();
     dao.incrementHit(noticeId);
     // 게시글 조회
     NoticeDTO notice = dao.getNotice(noticeId);
@@ -96,10 +97,10 @@
     <div class="detail-box">
         
         <div class="detail-header">
-            <div class="detail-title"><%= notice.getNoticeId() %>. <%= notice.getTitle() %></div>
+            <div class="detail-title"><%= notice.getNoticeNo() %>. <%= notice.getTitle() %></div>
             <div class="detail-info d-flex justify-content-between">
                 <div><strong>작성자:</strong> 관리사무소</div>
-                <div><strong>작성일:</strong> <%= notice.getupLoadDate().toString().substring(0,10) %></div>
+                <div><strong>작성일:</strong> <%= notice.getRegDate() != null ? notice.getRegDate().toString().substring(0, 10) : "날짜없음" %></div>
             </div>
         </div>
 

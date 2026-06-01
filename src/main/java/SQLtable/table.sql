@@ -50,18 +50,18 @@ CREATE TABLE facility (
 );
 
 -------------------------------------------------------
---CREATE TABLE reserve (
---    reserveNo       NUMBER PRIMARY KEY,
---   facilityNo      NUMBER NOT NULL,
---    userNo          NUMBER NOT NULL,
---    reserveDate     DATE DEFAULT SYSDATE,      -- 예약 신청일 (기존 것 유지!)
---    useDate         DATE NOT NULL,             -- 실제 이용일
---    startTime       NUMBER NOT NULL,           -- 이용 시작 시간
---    endTime         NUMBER NOT NULL,           -- 이용 종료 시간
---    price           NUMBER DEFAULT 0,          -- 결제 금액
---    status          VARCHAR2(20) DEFAULT 'ACTIVE', -- 예약 상태
-    
+CREATE TABLE reserve (
+    reserveNo       NUMBER PRIMARY KEY,
+    facilityNo      NUMBER NOT NULL,
+    userNo          NUMBER NOT NULL,
+    reserveDate     DATE DEFAULT SYSDATE,      -- 예약 신청일 (기존 것 유지!)
+    useDate         DATE NOT NULL,             -- 실제 이용일
+    startTime       NUMBER NOT NULL,           -- 이용 시작 시간
+    endTime         NUMBER NOT NULL,           -- 이용 종료 시간
+    price           NUMBER DEFAULT 0,          -- 결제 금액
+    status          VARCHAR2(20) DEFAULT 'ACTIVE', -- 예약 상태
+    CONSTRAINT chk_status_type CHECK (status IN ('ACTIVE', 'COMPLETED', 'CANCELLED')),
     -- 외래키 설정
---    CONSTRAINT fk_facility FOREIGN KEY (facilityNo) REFERENCES facility(facilityNo),
---    CONSTRAINT fk_user FOREIGN KEY (userNo) REFERENCES users(userNo)
---);
+    CONSTRAINT fk_facility FOREIGN KEY (facilityNo) REFERENCES facility(facilityNo),
+    CONSTRAINT fk_user FOREIGN KEY (userNo) REFERENCES users(userNo)
+);

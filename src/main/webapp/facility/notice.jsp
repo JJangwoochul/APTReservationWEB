@@ -5,9 +5,8 @@
 <%@ page import="dto.NoticeDTO" %>
 
 <%
-//공지사항 노출 확인
     //데이터 조회: 페이지가 열리면 DB에서 게시글 리스트를 가져옴
-    NoticeDAO dao = new NoticeDAO();
+    NoticeDAO dao = NoticeDAO.getInstance();
     List<NoticeDTO> list = dao.getNoticeList();
 %>
 <html>
@@ -99,10 +98,10 @@
                     if(list != null && !list.isEmpty()) { 
                     for(NoticeDTO notice : list) { %>
                     <tr>
-                        <td class="text-center text-muted"><%= notice.getNoticeId() %></td>
-                        <td><a href="<%= request.getContextPath() %>/facility/notice_detail.jsp?id=<%= notice.getNoticeId() %>" class="notice-link"><%= notice.getTitle() %></a></td>
+                        <td class="text-center text-muted"><%= notice.getNoticeNo() %></td>
+                        <td><a href="<%= request.getContextPath() %>/facility/notice_detail.jsp?id=<%= notice.getNoticeNo() %>" class="notice-link"><%= notice.getTitle() %></a></td>
                         <%--날짜 확인 ->결과를 10글자로 짤라 YYYY-MM-DD형태로 보이게 함--%>
-                        <td class="text-center text-muted"><%= notice.getupLoadDate().toString().substring(0, 10) %></td>
+                        <td class="text-center text-muted"><%= notice.getRegDate() != null ? notice.getRegDate().toString().substring(0, 10) : "날짜없음" %></td>
                     </tr>
                 <%  } 
                 } else { // 데이터가 없을 때 안내 메세지(공지사항이 없을때)

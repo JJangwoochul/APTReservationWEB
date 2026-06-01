@@ -42,7 +42,7 @@
     dto.setCondition(condition);
     dto.setPeopleInStock(stock);
     dto.setFileName(fileName);
-    dto.setQuantity(stock); 
+    dto.setQuantity(quantity); 
 
     // 6. DB 저장 (DAO 호출)
     try {

@@ -46,6 +46,7 @@
                     <td><span class="badge bg-info text-dark"><%=facility.getCondition()%></span></td>
                     <td><%=facility.getPeopleInStock()%>명</td>
                     <td>
+                        <%--수정,삭제 하는 파라미터 전달시킴 --%>
                         <a href="updateFacility.jsp?no=<%=facility.getFacilityNo()%>" class="btn btn-sm btn-warning">수정</a>
                         <a href="deleteFacility.jsp?no=<%=facility.getFacilityNo()%>" class="btn btn-sm btn-danger" 
                            onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>

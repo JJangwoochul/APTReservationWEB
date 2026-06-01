@@ -2,6 +2,7 @@
 <%@ include file="admin_check.jsp" %> <%--관리자만 이용 가능--%>
 <%@ page import="dao.FacilityDAO" %>
 <%
+//체크완
     // 1. 파라미터로 넘어온 삭제할 시설 번호 받기
     String fNo = request.getParameter("no");
 

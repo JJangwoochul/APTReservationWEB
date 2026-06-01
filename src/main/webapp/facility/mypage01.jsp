@@ -1,5 +1,25 @@
 <%@ page contentType="text/html; charset=utf-8" %>
-<%@ page language="java" %>
+<%@ page import="java.util.*" %>
+<%@ page import="dto.ReserveDTO, dao.ReserveDAO" %>
+<%@ page import="dto.FacilityDTO, dao.FacilityDAO" %>
+<%
+    // (1) 싱글톤 패턴으로 DAO 객체 가져오기
+    ReserveDAO dao = ReserveDAO.getInstance();
+    FacilityDAO facilityDAO = FacilityDAO.getInstance(); // 시설정보조회 인스턴스
+    
+    // (2) 로그인 세션에서 유저 번호 가져오기 (예시: 세션에 userNo가 저장되어 있다고 가정)
+    // 실제 프로젝트 환경에 맞게 세션 키를 확인하세요.
+    Integer userNo = (Integer) session.getAttribute("userNo");
+    
+    // 로그인이 안 되어 있을 경우 예외 처리
+    if (userNo == null) {
+        response.sendRedirect("../member/login.jsp");
+        return;
+    }
+   // (3) 상태별로 리스트 분리하여 조회
+    ArrayList<ReserveDTO> activeList = dao.getActiveReservesByUser(userNo); // 진행 중인 예약
+    ArrayList<ReserveDTO> historyList = dao.getHistoryReservesByUser(userNo); // 과거/취소 내역
+%>
 <html>
 <head>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -99,64 +119,59 @@
 <div class="mypage-container">
     <div class="title">마이페이지</div>
     
-    <%-- (2) 탭 버튼: 클릭 시 openTab 함수 호출 --%>
     <div class="tab-box">
         <button class="tab-btn active" onclick="openTab(event, 'reservation')">예약내역</button>
         <button class="tab-btn" onclick="openTab(event, 'history')">이용내역</button>
     </div>
 
-    <%-- 예약내역 섹션 --%>
+    <%-- 1. 예약내역(Active) 탭 --%>
     <div id="reservation" class="tab-content active">
-        <div class="card-box">
-            <div class="row align-items-center">
-                <div class="col-md-2"><div class="img-box"></div></div>
-                <div class="col-md-7">
-                    <div class="facility-name">헬스장</div>
-                    <div class="info">예약일 : 2026-05-19 <br> 이용시간 : 18:00 ~ 20:00 <br> 금액 : 2,000원</div>
-                </div>
-                <div class="col-md-3 text-end">
-                    <button class="btn btn-dark-custom" onclick="location.href='<%= request.getContextPath() %>/facility/reserveCancel.jsp'">예약취소</button><br>
-                    <button class="btn btn-dark-custom" onclick="location.href='<%= request.getContextPath() %>/facility/facilitys.jsp'">상세보기</button>
-                </div>
-            </div>
-        </div>
-        <div class="card-box">
-            <div class="row align-items-center">
-                <div class="col-md-2"><div class="img-box"></div></div>
-                <div class="col-md-7">
-                    <div class="facility-name">게스트하우스</div>
-                    <div class="info">예약일 : 2026-05-21 <br> 이용기간 : 05-21 ~ 05-23 <br> 금액 : 8,000원</div>
-                </div>
-                <div class="col-md-3 text-end">
-                    <button class="btn btn-dark-custom" onclick="location.href='<%= request.getContextPath() %>/facility/reserveCancel.jsp'">예약취소</button><br>
-                    <button class="btn btn-dark-custom" onclick="location.href='<%= request.getContextPath() %>/facility/guesthouse.jsp'">상세보기</button>
+        <% if (activeList.isEmpty()) { %>
+            <div class="card-box text-center">진행 중인 예약이 없습니다.</div>
+        <% } else { 
+             for (ReserveDTO dto : activeList) { 
+             FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
+             String facilityName = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
+        %>
+            <div class="card-box">
+                <div class="row align-items-center">
+                    <div class="col-md-7">
+                        <div class="facility-name"><%= facilityName %></div>
+                        <div class="info">예약일 : <%= dto.getReserveDate() %> <br> 금액 : <%= String.format("%,d", dto.getPrice()) %>원</div>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <button class="btn btn-dark-custom" onclick="location.href='reserveCancel.jsp?reserveNo=<%= dto.getReserveNo() %>'">예약취소</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="total-box">총 결제금액 : 10,000원</div>
+        <% } } %>
     </div>
 
-    <%-- (3) 이용내역 섹션: 기본적으로 숨겨져 있음 --%>
+    <%-- 2. 이용내역(History) 탭 --%>
     <div id="history" class="tab-content">
-        <div class="card-box">
-            <div class="row align-items-center">
-                <div class="col-md-7">
-                    <div class="facility-name">헬스장 (이용완료)</div>
-                    <div class="info">이용일 : 2026-05-01 <br> 이용시간 : 10:00 ~ 12:00</div>
+        <% if (historyList.isEmpty()) { %>
+            <div class="card-box text-center">이용 내역이 없습니다.</div>
+        <% } else { 
+             for (ReserveDTO dto : historyList) { 
+                 FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
+                 String facilityName = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
+        %>
+            <div class="card-box">
+                <div class="row align-items-center">
+                    <div class="col-md-7">
+                        <div class="facility-name"><%= facilityName %> (<%= dto.getStatus() %>)</div>
+                        <div class="info">이용일 : <%= dto.getReserveDate() %></div>
+                    </div>
                 </div>
             </div>
-        </div>
+        <% } } %>
     </div>
 </div>
 
-<%-- (4) 탭 전환 스크립트 --%>
 <script>
 function openTab(evt, tabId) {
-    // 1. 모든 탭 컨텐츠 숨기기
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    // 2. 모든 탭 버튼 active 클래스 제거
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    // 3. 선택한 탭 보이기 및 버튼 활성화
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     evt.currentTarget.classList.add('active');
 }
