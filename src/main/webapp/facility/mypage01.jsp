@@ -18,9 +18,10 @@
     ArrayList<ReserveDTO> activeList = dao.getActiveReservesByUser(userNo);
     ArrayList<ReserveDTO> historyList = dao.getRecentHistoryReservesByUser(userNo);
 
-    // 날짜 표시용
+    // 날짜 표시용: 이번 달 1일 ~ 이번 달 말일 계산
     LocalDate now = LocalDate.now();
-    LocalDate oneMonthAgo = now.minusMonths(1);
+    LocalDate firstDay = now.withDayOfMonth(1);          // 이번 달 1일
+    LocalDate lastDay = now.withDayOfMonth(now.lengthOfMonth()); // 이번 달 말일
 %>
 <html>
 <head>
@@ -41,49 +42,72 @@
     </div>
 
     <%-- 1. 예약내역 탭 --%>
-    <div id="reservation" class="tab-content">
-        <% if (activeList.isEmpty()) { %>
-            <div class="card p-4 text-center border-0 shadow-sm">진행 중인 예약이 없습니다.</div>
-        <% } else { 
-             for (ReserveDTO dto : activeList) { 
+<div id="reservation" class="tab-content">
+    <div class="alert alert-info border shadow-sm mb-4 small">
+        <strong>현재 진행 중인 예약:</strong> 총 <%= activeList.size() %>건
+    </div>
+    <% if (activeList.isEmpty()) { %>
+        <div class="card p-4 text-center border-0 shadow-sm">진행 중인 예약이 없습니다.</div>
+    <% } else { 
+         // 총합 계산용 변수 선언
+         int activeTotal = 0;
+         for (ReserveDTO dto : activeList) { 
+             activeTotal += dto.getPrice(); // 예약 금액 누적
              FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
              String name = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
-        %>
-            <div class="card p-4 mb-3 border-0 shadow-sm rounded-3">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h5 class="fw-bold mb-1"><%= name %></h5>
-                        <p class="text-secondary small mb-0">예약일 : <%= dto.getReserveDate() %></p>
-                        <p class="text-secondary small">금액 : <%= String.format("%,d", dto.getPrice()) %>원</p>
-                    </div>
-                    <div class="col-md-4 text-md-end d-grid gap-2 d-md-block">
-                        <a href="reserveCancel.jsp?reserveNo=<%= dto.getReserveNo() %>" class="btn btn-outline-danger btn-sm px-3">예약취소</a>
-                        <a href="./mypage01_detail.jsp?no=<%= dto.getReserveNo() %>" class="btn btn-outline-primary btn-sm px-3">상세보기</a>
-                    </div>
+    %>
+        <div class="card p-4 mb-3 border-0 shadow-sm rounded-3">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="fw-bold mb-1"><%= name %></h5>
+                    <%-- 날짜 포맷팅 적용 --%>
+                    <p class="text-secondary small mb-0">예약일 : <%= dto.getReserveDate().substring(0, 10) %></p>
+                    <p class="text-secondary small">금액 : <%= String.format("%,d", dto.getPrice()) %>원</p>
+                </div>
+                <div class="col-md-4 text-md-end d-grid gap-2 d-md-block">
+                    <a href="reserveCancel.jsp?reserveNo=<%= dto.getReserveNo() %>" class="btn btn-outline-danger btn-sm px-3">예약취소</a>
+                    <a href="./mypage01_detail.jsp?no=<%= dto.getReserveNo() %>" class="btn btn-outline-primary btn-sm px-3">상세보기</a>
                 </div>
             </div>
-        <% } } %>
+        </div>
+    <% } %>
+
+    <%-- 예약내역 총합 출력 --%>
+    <div class="card p-3 mb-3 bg-primary text-white text-end">
+        <span class="fs-5">총 예약 금액 : <strong><%= String.format("%,d", activeTotal) %>원</strong></span>
     </div>
+    <% } %>
+</div>
 
     <%-- 2. 이용내역 탭 --%>
-    <div id="history" class="tab-content" style="display: none;">
-        <div class="alert alert-light border shadow-sm mb-4 small text-secondary">
-            <strong>최근 1개월 이용내역:</strong> <%= oneMonthAgo %> ~ <%= now %>
-        </div>
-        
-        <% if (historyList.isEmpty()) { %>
-            <div class="card p-4 text-center border-0 shadow-sm">최근 1개월간 이용 내역이 없습니다.</div>
-        <% } else { 
-             for (ReserveDTO dto : historyList) { 
+<div id="history" class="tab-content" style="display: none;">
+    <div class="alert alert-light border shadow-sm mb-4 small text-secondary">
+        <strong>6월 이용내역:</strong> <%= now.withDayOfMonth(1) %> ~ <%= now %>
+    </div>
+    
+    <% if (historyList.isEmpty()) { %>
+        <div class="card p-4 text-center border-0 shadow-sm">6월 이용 내역이 없습니다.</div>
+    <% } else { 
+         // 총합 계산용 변수 선언
+         int total = 0;
+         for (ReserveDTO dto : historyList) { 
+             total += dto.getPrice(); // 금액 누적
              FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
              String name = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
-        %>
-            <div class="card p-4 mb-3 border-0 shadow-sm rounded-3">
-                <h5 class="fw-bold mb-1"><%= name %> <span class="badge bg-light text-dark border"><%= dto.getStatus() %></span></h5>
-                <p class="text-secondary small mb-0">이용일 : <%= dto.getUseDate() %></p>
-            </div>
-        <% } } %>
+    %>
+        <div class="card p-4 mb-3 border-0 shadow-sm rounded-3">
+            <h5 class="fw-bold mb-1"><%= name %></h5>
+            <p class="text-secondary small mb-0">이용일 : <%= dto.getUseDate().substring(0, 10) %></p>
+            <p class="text-secondary small mb-0">결제 금액 : <%= String.format("%,d", dto.getPrice()) %>원</p>
+        </div>
+    <% } %>
+    
+    <%-- 총합 결과 출력 --%>
+    <div class="card p-3 mb-3 bg-dark text-white text-end">
+        <span class="fs-5">총 이용 금액 : <strong><%= String.format("%,d", total) %>원</strong></span>
     </div>
+    <% } %>
+</div>
 </div>
 
 <script>

@@ -175,8 +175,9 @@ public class ReserveDAO {
     // useDate가 현재 날짜로부터 1개월 이내인 내역만 조회
     // ORACLE 기준: ADD_MONTHS(SYSDATE, -1)
         String sql = "SELECT * FROM reserve WHERE userNo = ? " +
-                    "AND status IN ('COMPLETED', 'CANCELLED') " +
-                    "AND useDate >= TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYY-MM-DD') " +
+                    "AND status IN ('COMPLETED', 'CANCELLED') " + 
+                    "AND useDate >= TRUNC(SYSDATE, 'MM') " +
+                    "AND useDate < ADD_MONTHS(TRUNC(SYSDATE, 'MM'), 1) " +
                     "ORDER BY useDate DESC";
 
         try (Connection conn = DBconn.getConnection();
