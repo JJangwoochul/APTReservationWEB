@@ -46,42 +46,49 @@
     </div>
 
     <%-- 1. 예약내역 탭 --%>
-<div id="reservation" class="tab-content">
-    <div class="alert alert-info border shadow-sm mb-4 small">
-        <strong>현재 진행 중인 예약:</strong> 총 <%= activeList.size() %>건
-    </div>
-    <% if (activeList.isEmpty()) { %>
-        <div class="card p-4 text-center border-0 shadow-sm">진행 중인 예약이 없습니다.</div>
-    <% } else { 
-         // 총합 계산용 변수 선언
-         int activeTotal = 0;
-         for (ReserveDTO dto : activeList) { 
-             activeTotal += dto.getPrice(); // 예약 금액 누적
-             FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
-             String name = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
-    %>
-        <div class="card p-4 mb-3 border-0 shadow-sm rounded-3">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h5 class="fw-bold mb-1"><%= name %></h5>
-                    <%-- 날짜 포맷팅 적용 --%>
-                    <p class="text-secondary small mb-0">예약일 : <%= dto.getReserveDate().substring(0, 10) %></p>
-                    <p class="text-secondary small">금액 : <%= String.format("%,d", dto.getPrice()) %>원</p>
-                </div>
-                <div class="col-md-4 text-md-end d-grid gap-2 d-md-block">
-                    <a href="reserveCancel.jsp?reserveNo=<%= dto.getReserveNo() %>" class="btn btn-outline-danger btn-sm px-3">예약취소</a>
-                    <a href="./mypage01_detail.jsp?no=<%= dto.getReserveNo() %>" class="btn btn-outline-primary btn-sm px-3">상세보기</a>
+    <div id="reservation" class="tab-content">
+        <div class="alert alert-info border shadow-sm mb-4 small">
+            <strong>현재 진행 중인 예약:</strong> 총 <%= activeList.size() %>건
+        </div>
+        <% if (activeList.isEmpty()) { %>
+            <div class="card p-4 text-center border-0 shadow-sm">진행 중인 예약이 없습니다.</div>
+        <% } else { 
+             int activeTotal = 0;
+             for (ReserveDTO dto : activeList) { 
+                 activeTotal += dto.getPrice();
+                 FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
+                 String name = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
+                 
+                 // (2) 실시간 상태 판별 로직
+                 boolean isCompleted = "COMPLETED".equals(dto.getStatus()) || (dto.getEndTime() <= currentHour);
+        %>
+            <div class="card p-4 mb-3 border-0 shadow-sm rounded-3">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="fw-bold mb-1"><%= name %>
+                            <%-- (3) 상태 배지 적용 --%>
+                            <span class="badge <%= isCompleted ? "bg-secondary" : "bg-success" %> ms-2">
+                                <%= isCompleted ? "이용 완료" : "예약 중" %>
+                            </span>
+                        </h5>
+                        <p class="text-secondary small mb-0">예약일 : <%= dto.getReserveDate().substring(0, 10) %></p>
+                        <p class="text-secondary small">금액 : <%= String.format("%,d", dto.getPrice()) %>원 | 시간 : <%= dto.getStartTime() %>:00 ~ <%= dto.getEndTime() %>:00</p>
+                    </div>
+                    <div class="col-md-4 text-md-end d-grid gap-2 d-md-block">
+                        <%-- (4) 완료된 예약은 취소 버튼 숨기기 --%>
+                        <% if (!isCompleted) { %>
+                            <a href="reserveCancel.jsp?reserveNo=<%= dto.getReserveNo() %>" class="btn btn-outline-danger btn-sm px-3">예약취소</a>
+                        <% } %>
+                        <a href="./mypage01_detail.jsp?no=<%= dto.getReserveNo() %>" class="btn btn-outline-primary btn-sm px-3">상세보기</a>
+                    </div>
                 </div>
             </div>
+        <% } %>
+        <div class="card p-3 mb-3 bg-primary text-white text-end">
+            <span class="fs-5">총 예약 금액 : <strong><%= String.format("%,d", activeTotal) %>원</strong></span>
         </div>
-    <% } %>
-
-    <%-- 예약내역 총합 출력 --%>
-    <div class="card p-3 mb-3 bg-primary text-white text-end">
-        <span class="fs-5">총 예약 금액 : <strong><%= String.format("%,d", activeTotal) %>원</strong></span>
+        <% } %>
     </div>
-    <% } %>
-</div>
 
     <%-- 2. 이용내역 탭 --%>
 <div id="history" class="tab-content" style="display: none;">
@@ -94,24 +101,35 @@
     <% } else { 
          // 총합 계산용 변수 선언
          int total = 0;
-         for (ReserveDTO dto : historyList) { 
-             total += dto.getPrice(); // 금액 누적
-             FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
-             String name = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
+            for (ReserveDTO dto : historyList) { 
+            FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
+            String name = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
+    
+        // 상태에 따라 총액 누적 (취소 건은 합계에서 제외)
+            if ("COMPLETED".equals(dto.getStatus())) {
+            total += dto.getPrice();
+            }
     %>
         <div class="card p-4 mb-3 border-0 shadow-sm rounded-3">
-            <h5 class="fw-bold mb-1"><%= name %></h5>
-            <p class="text-secondary small mb-0">이용일 : <%= dto.getUseDate().substring(0, 10) %></p>
-            <p class="text-secondary small mb-0">결제 금액 : <%= String.format("%,d", dto.getPrice()) %>원</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-1"><%= name %></h5>
+                <%-- 상태에 따른 배지 --%>
+                <span class="badge <%= "CANCELLED".equals(dto.getStatus()) ? "bg-danger" : "bg-secondary" %>">
+                    <%= "CANCELLED".equals(dto.getStatus()) ? "취소됨" : "이용 완료" %>
+                </span>
+            </div>
+            <p class="text-secondary small mb-0">일시 : <%= dto.getReserveDate().substring(0, 10) %></p>
+            <p class="text-secondary small mb-0">
+                <%= "CANCELLED".equals(dto.getStatus()) ? "취소" : "결제" %> 금액 : 
+                <%= String.format("%,d", dto.getPrice()) %>원
+            </p>
         </div>
     <% } %>
     
-    <%-- 총합 결과 출력 --%>
     <div class="card p-3 mb-3 bg-dark text-white text-end">
-        <span class="fs-5">총 이용 금액 : <strong><%= String.format("%,d", total) %>원</strong></span>
+        <span class="fs-5">총 이용 금액(취소 제외) : <strong><%= String.format("%,d", total) %>원</strong></span>
     </div>
     <% } %>
-</div>
 </div>
 
 <script>

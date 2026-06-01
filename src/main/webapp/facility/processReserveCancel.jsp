@@ -1,37 +1,37 @@
 <%@ page contentType="text/html; charset=utf-8" %>
 <%@ page import="dao.ReserveDAO, dao.FacilityDAO, dto.ReserveDTO" %>
 <%
-    // 1. 요청 인코딩 설정
     request.setCharacterEncoding("utf-8");
 
-    // 2. 예약 번호(reserveNo) 파라미터 받기
     String rNo = request.getParameter("reserveNo");
     
-    // 3. 파라미터가 유효한지 확인 후 삭제 로직 수행
     if (rNo != null && !rNo.isEmpty()) {
         try {
             int reserveNo = Integer.parseInt(rNo);
             
-            // DAO를 사용하여 데이터베이스에서 삭제
             ReserveDAO reserveDAO = ReserveDAO.getInstance();
             FacilityDAO facilityDAO = FacilityDAO.getInstance();
-            //예약 시설번호 조회
             ReserveDTO reserve = reserveDAO.getReserveByNo(reserveNo);
             
-            if (reserve != null) {
-                int facilityNo = reserve.getFacilityNo();
-                //예약삭제
-                reserveDAO.deleteReserve(reserveNo);
-                //quantity 1 감소
-                facilityDAO.decreaseQuantity(facilityNo);
+            if (reserve != null && "ACTIVE".equals(reserve.getStatus())) {
+                // 1. 예약 상태를 CANCELLED로 변경
+                reserveDAO.updateReserveStatus(reserveNo, "CANCELLED");
+                
+                // 2. 시설 인원 복구
+                facilityDAO.decreaseQuantity(reserve.getFacilityNo());
+                
+                // 3. 기획대로 취소 확인 페이지로 이동
+                response.sendRedirect("cancelCheck.jsp");
+                return; // 리다이렉트 후 코드 실행 방지
+            } else {
+                out.println("<script>alert('취소할 수 없는 예약입니다.'); history.back();</script>");
             }
             
         } catch (Exception e) {
-            // 숫자 변환 중 오류 발생 시 에러 로그 기록
             e.printStackTrace();
+            out.println("<script>alert('오류가 발생했습니다.'); history.back();</script>");
         }
+    } else {
+        out.println("<script>alert('잘못된 접근입니다.'); history.back();</script>");
     }
-
-    // 4. 처리 완료 후 취소 확인 페이지로 즉시 이동
-    response.sendRedirect("cancelCheck.jsp");
 %>

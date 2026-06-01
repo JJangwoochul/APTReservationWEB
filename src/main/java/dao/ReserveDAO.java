@@ -74,15 +74,15 @@ public class ReserveDAO {
                 while (rs.next()) {
                     // DTO 부분 생성자 활용
                     ReserveDTO dto = new ReserveDTO(
-                        rs.getInt("reserveNo"),
-                        rs.getInt("facilityNo"),
-                        rs.getInt("userNo"),
-                        rs.getString("reserveDate"),
-                        rs.getString("useDate"),
-                        rs.getInt("startTime"),
-                        rs.getInt("endTime"),
-                        rs.getInt("price"),
-                        rs.getString("status"));
+                            rs.getInt("reserveNo"),
+                            rs.getInt("facilityNo"),
+                            rs.getInt("userNo"),
+                            rs.getString("reserveDate"),
+                            rs.getString("useDate"),
+                            rs.getInt("startTime"),
+                            rs.getInt("endTime"),
+                            rs.getInt("price"),
+                            rs.getString("status"));
                     list.add(dto);
                 }
             }
@@ -140,17 +140,17 @@ public class ReserveDAO {
             pstmt.executeUpdate();
         }
     }
-    
+
     // 7. 예약 번호로 특정 예약 정보 하나만 조회 (추가)
     public ReserveDTO getReserveByNo(int reserveNo) throws SQLException {
         ReserveDTO dto = null; // 결과가 없을 경우 null 반환
         String sql = "SELECT * FROM reserve WHERE reserveNo = ?";
 
         try (Connection conn = DBconn.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, reserveNo);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) { // 데이터가 존재하면 DTO 생성
                     dto = new ReserveDTO(
@@ -172,16 +172,16 @@ public class ReserveDAO {
     // 8. 최근 1개월간의 이용 내역 조회 (이용내역 탭용)
     public ArrayList<ReserveDTO> getRecentHistoryReservesByUser(int userNo) throws SQLException {
         ArrayList<ReserveDTO> list = new ArrayList<>();
-    // useDate가 현재 날짜로부터 1개월 이내인 내역만 조회
-    // ORACLE 기준: ADD_MONTHS(SYSDATE, -1)
-    String sql = "SELECT * FROM reserve WHERE userNo = ? " +
-             "AND status IN ('COMPLETED', 'CANCELLED') " + 
-             "AND TRUNC(useDate) >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -1) " +
-             "AND TRUNC(useDate) < TRUNC(SYSDATE, 'MM') " +
-             "ORDER BY useDate DESC";
+        // useDate가 현재 날짜로부터 1개월 이내인 내역만 조회
+        // ORACLE 기준: ADD_MONTHS(SYSDATE, -1)
+        String sql = "SELECT * FROM reserve WHERE userNo = ? " +
+                "AND status IN ('COMPLETED', 'CANCELLED') " +
+                "AND TRUNC(useDate) >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -1) " +
+                "AND TRUNC(useDate) < TRUNC(SYSDATE, 'MM') " +
+                "ORDER BY useDate DESC";
 
         try (Connection conn = DBconn.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userNo);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -200,5 +200,25 @@ public class ReserveDAO {
             }
         }
         return list;
+    }
+
+    // (9) 특정 시설의 특정 날짜 예약 건수 조회 (정원 체크용 추가)
+    public int getReservedCount(int facilityNo, String useDate) throws SQLException {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM reserve WHERE facilityNo = ? AND useDate = ? AND status = 'ACTIVE'";
+
+        try (Connection conn = DBconn.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, facilityNo);
+            pstmt.setString(2, useDate);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+        }
+        return count;
     }
 }

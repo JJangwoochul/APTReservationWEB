@@ -6,8 +6,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>예약 확인 및 확정</title>
     <script type="text/javascript">
+         // 선택한 시작 시간에 맞춰 종료 시간 자동 계산
+        function updateTimeValues() {
+        var start = parseInt(document.getElementById("startTimeSelect").value);
+        var end = start + 2;
+    
+        var displayEnd = end;
+        var dayLabel = "";
+    
+        // 24시가 넘어가면 날짜 처리
+        if (end >= 24) {
+            displayEnd = end - 24; // 예: 25시면 1시로 표시
+            dayLabel = " (다음날)";
+        }
+    
+            document.getElementById("startTime").value = start;
+            document.getElementById("endTime").value = end; // DB 저장은 25시로 해도 무방합니다.
+            document.getElementById("timeDisplay").innerText = 
+        start + ":00 ~ " + displayEnd + ":00" + dayLabel;
+        }
         // 예약 확정 버튼 클릭 시, 숨겨진 폼을 서버로 전송하는 함수
         function confirmReservation() {
+            updateTimeValues();
             document.realReserveForm.submit();
         }
     </script>
@@ -34,6 +54,15 @@
                     // 세션에서 사용자 정보 확인 및 게스트하우스 여부 판별(조건부 UI 변경용)
                     int userNo = (session.getAttribute("userNo") != null) ? (Integer) session.getAttribute("userNo") : 0;
                     boolean isGuesthouse = (facility != null && "게스트하우스".equals(facility.getFacilityName()));
+                    // (1) 최종 금액 계산 로직 분리
+                    int finalPrice = 0;
+                    if (facility != null) {
+                        if (isGuesthouse) {
+                            finalPrice = facility.getFacilityPrice() * Integer.parseInt(stayDays);
+                        } else {
+                            finalPrice = facility.getFacilityPrice();
+                        }
+                    }
                 %>
                 
                 <%-- 예약 유형(게스트하우스 여부)에 따라 헤더 스타일 변경 --%>
@@ -49,20 +78,45 @@
 
                     <%-- 예약 요약 정보 섹션 --%>
                     <div class="bg-body-tertiary p-3 rounded-3 mb-4">
+    
+                    <% if (isGuesthouse) { %>
+                    <%-- 게스트하우스 전용 요약 --%>
+                    <div class="row py-2 border-bottom border-white">
+                        <div class="col-4 text-secondary fw-bold">숙박 기간</div>
+                        <div class="col-8 text-dark fw-bold fs-6">
+                            <%= reserveDate %> (체크인) ~ <br>
+                            <span class="badge bg-dark"><%= stayDays %>박 <%= Integer.parseInt(stayDays) + 1 %>일</span>
+                        </div>
+                    </div>
+                    <% } else { %>
                         <div class="row py-2 border-bottom border-white">
-                            <div class="col-4 text-secondary fw-bold">예약 날짜</div>
-                            <div class="col-8 text-dark fw-bold fs-6">
-                                <%= (reserveDate != null) ? reserveDate : "날짜 미선택" %>
-                                <% if (stayDays != null && !stayDays.isEmpty()) { %>
-                                    <span class="badge bg-secondary ms-2"><%= stayDays %>박 <%= Integer.parseInt(stayDays) + 1 %>일</span>
+                            <div class="col-4 text-secondary fw-bold">이용 날짜</div>
+                            <div class="col-8 text-dark fw-bold fs-6"><%= reserveDate %></div>
+                        </div>
+                        <div class="row py-2 border-bottom border-white">
+                            <div class="col-4 text-secondary fw-bold">이용 시간</div>
+                            <div class="col-8 text-dark fw-bold fs-6" id="timeDisplay">시간을 선택해주세요.</div>
+                        </div>
+                        <%-- (2) 일반 시설용 시간 선택 옵션 --%>
+                        <div class="row py-2 border-bottom border-white">
+                            <div class="col-4 text-secondary fw-bold">시간 선택</div>
+                            <div class="col-8">
+                                <select id="startTimeSelect" class="form-select form-select-sm" onchange="updateTimeValues()">
+                                <% 
+                                    for(int i = 0; i <= 23; i++) { 
+                                    int end = i + 2;
+                                    String display = i + ":00 ~ " + (end > 24 ? end - 24 : end) + ":00" + (end > 24 ? " (다음날)" : "");
+                                %>
+                                <option value="<%= i %>"><%= display %></option>
                                 <% } %>
+                                </select>
                             </div>
                         </div>
+                        <% } %>
+
                         <div class="row py-2">
-                            <div class="col-4 text-secondary fw-bold">이용료</div>
-                            <div class="col-8 text-danger fw-bold fs-5">
-                                <%= (facility != null) ? facility.getFacilityPrice() : 0 %> 원
-                            </div>
+                            <div class="col-4 text-secondary fw-bold">최종 금액</div>
+                            <div class="col-8 text-danger fw-bold fs-5"><%= finalPrice %> 원</div>
                         </div>
                     </div>
 
