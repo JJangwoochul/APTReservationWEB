@@ -1,169 +1,86 @@
 <%@ page contentType="text/html; charset=utf-8" %>
-<%@ page import="java.util.*" %>
+<%@ page import="java.util.*, java.time.*" %>
 <%@ page import="dto.ReserveDTO, dao.ReserveDAO" %>
 <%@ page import="dto.FacilityDTO, dao.FacilityDAO" %>
 <%
     // (1) 싱글톤 패턴으로 DAO 객체 가져오기
     ReserveDAO dao = ReserveDAO.getInstance();
-    FacilityDAO facilityDAO = FacilityDAO.getInstance(); // 시설정보조회 인스턴스
+    FacilityDAO facilityDAO = FacilityDAO.getInstance();
     
-    // (2) 로그인 세션에서 유저 번호 가져오기 (예시: 세션에 userNo가 저장되어 있다고 가정)
-    // 실제 프로젝트 환경에 맞게 세션 키를 확인하세요.
     Integer userNo = (Integer) session.getAttribute("userNo");
     
-    // 로그인이 안 되어 있을 경우 예외 처리
     if (userNo == null) {
         response.sendRedirect("../member/login.jsp");
         return;
     }
-   // (3) 상태별로 리스트 분리하여 조회
-    ArrayList<ReserveDTO> activeList = dao.getActiveReservesByUser(userNo); // 진행 중인 예약
-    ArrayList<ReserveDTO> historyList = dao.getHistoryReservesByUser(userNo); // 과거/취소 내역
+
+    // (2) 상태별 리스트 조회 (이용내역은 최근 1개월 메서드 호출)
+    ArrayList<ReserveDTO> activeList = dao.getActiveReservesByUser(userNo);
+    ArrayList<ReserveDTO> historyList = dao.getRecentHistoryReservesByUser(userNo);
+
+    // 날짜 표시용
+    LocalDate now = LocalDate.now();
+    LocalDate oneMonthAgo = now.minusMonths(1);
 %>
 <html>
 <head>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-<title>마이페이지</title>
-<style>
-    body {
-        background-color: #f5f6f8;
-    }
-
-    .mypage-container {
-        width: 1200px;
-        margin: 50px auto;
-    }
-
-    .title {
-        font-size: 30px;
-        font-weight: bold;
-        margin-bottom: 30px;
-    }
-
-    .tab-box {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .tab-btn {
-        padding: 10px 25px;
-        border-radius: 10px;
-        border: none;
-        background: #e9ecef;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .tab-btn.active {
-        background: #212529;
-        color: white;
-    }
-
-    .tab-content {
-        display: none;
-    }
-
-    .tab-content.active {
-        display: block;
-    }
-
-    .card-box {
-        background: white;
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-        transition: 0.3s;
-    }
-
-    .card-box:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .img-box {
-        width: 120px;
-        height: 120px;
-        background: #ddd;
-        border-radius: 12px;
-    }
-
-    .facility-name {
-        font-size: 22px;
-        font-weight: bold;
-    }
-
-    .info {
-        color: #666;
-        line-height: 1.8;
-    }
-
-    .btn-dark-custom {
-        background: #212529;
-        color: white;
-        width: 120px;
-        margin-bottom: 8px;
-    }
-
-    .total-box {
-        text-align: right;
-        font-size: 24px;
-        font-weight: bold;
-        margin-top: 30px;
-    }
-</style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>마이페이지</title>
 </head>
-<body>
+<body class="bg-light">
 <%@ include file="header.jsp" %>
 
-<div class="mypage-container">
-    <div class="title">마이페이지</div>
+<div class="container py-5" style="max-width: 1000px;">
+    <h2 class="fw-bold mb-4">마이페이지</h2>
     
-    <div class="tab-box">
-        <button class="tab-btn active" onclick="openTab(event, 'reservation')">예약내역</button>
-        <button class="tab-btn" onclick="openTab(event, 'history')">이용내역</button>
+    <div class="d-flex gap-2 mb-4 border-bottom">
+        <button class="btn btn-link text-decoration-none text-dark fw-bold border-bottom border-2 border-dark" 
+                onclick="openTab(event, 'reservation')" id="defaultOpen">예약내역</button>
+        <button class="btn btn-link text-decoration-none text-muted fw-bold" 
+                onclick="openTab(event, 'history')">이용내역</button>
     </div>
 
-    <%-- 1. 예약내역(Active) 탭 --%>
-    <div id="reservation" class="tab-content active">
+    <%-- 1. 예약내역 탭 --%>
+    <div id="reservation" class="tab-content">
         <% if (activeList.isEmpty()) { %>
-            <div class="card-box text-center">진행 중인 예약이 없습니다.</div>
+            <div class="card p-4 text-center border-0 shadow-sm">진행 중인 예약이 없습니다.</div>
         <% } else { 
              for (ReserveDTO dto : activeList) { 
              FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
-             String facilityName = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
+             String name = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
         %>
-            <div class="card-box">
+            <div class="card p-4 mb-3 border-0 shadow-sm rounded-3">
                 <div class="row align-items-center">
-                    <div class="col-md-7">
-                        <div class="facility-name"><%= facilityName %></div>
-                        <div class="info">예약일 : <%= dto.getReserveDate() %> <br> 금액 : <%= String.format("%,d", dto.getPrice()) %>원</div>
+                    <div class="col-md-8">
+                        <h5 class="fw-bold mb-1"><%= name %></h5>
+                        <p class="text-secondary small mb-0">예약일 : <%= dto.getReserveDate() %></p>
+                        <p class="text-secondary small">금액 : <%= String.format("%,d", dto.getPrice()) %>원</p>
                     </div>
-                    <div class="col-md-3 text-end">
-                        <button class="btn btn-dark-custom" onclick="location.href='reserveCancel.jsp?reserveNo=<%= dto.getReserveNo() %>'">예약취소</button>
-                        <button class="btn btn-dark-custom" onclick="location.href='../facility/facility.jsp?no=<%= dto.getFacilityNo() %>'">상세보기</button>
+                    <div class="col-md-4 text-md-end d-grid gap-2 d-md-block">
+                        <a href="reserveCancel.jsp?reserveNo=<%= dto.getReserveNo() %>" class="btn btn-outline-danger btn-sm px-3">예약취소</a>
+                        <a href="./mypage01_detail.jsp?no=<%= dto.getReserveNo() %>" class="btn btn-outline-primary btn-sm px-3">상세보기</a>
                     </div>
                 </div>
             </div>
         <% } } %>
     </div>
 
-    <%-- 2. 이용내역(History) 탭 --%>
-    <div id="history" class="tab-content">
+    <%-- 2. 이용내역 탭 --%>
+    <div id="history" class="tab-content" style="display: none;">
+        <div class="alert alert-light border shadow-sm mb-4 small text-secondary">
+            <strong>최근 1개월 이용내역:</strong> <%= oneMonthAgo %> ~ <%= now %>
+        </div>
+        
         <% if (historyList.isEmpty()) { %>
-            <div class="card-box text-center">이용 내역이 없습니다.</div>
+            <div class="card p-4 text-center border-0 shadow-sm">최근 1개월간 이용 내역이 없습니다.</div>
         <% } else { 
              for (ReserveDTO dto : historyList) { 
-                 FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
-                 String facilityName = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
+             FacilityDTO fDto = facilityDAO.getFacilityByNo(dto.getFacilityNo());
+             String name = (fDto != null) ? fDto.getFacilityName() : "알 수 없는 시설";
         %>
-            <div class="card-box">
-                <div class="row align-items-center">
-                    <div class="col-md-7">
-                        <div class="facility-name"><%= facilityName %> (<%= dto.getStatus() %>)</div>
-                        <div class="info">이용일 : <%= dto.getReserveDate() %></div>
-                    </div>
-                </div>
+            <div class="card p-4 mb-3 border-0 shadow-sm rounded-3">
+                <h5 class="fw-bold mb-1"><%= name %> <span class="badge bg-light text-dark border"><%= dto.getStatus() %></span></h5>
+                <p class="text-secondary small mb-0">이용일 : <%= dto.getUseDate() %></p>
             </div>
         <% } } %>
     </div>
@@ -171,10 +88,14 @@
 
 <script>
 function openTab(evt, tabId) {
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    evt.currentTarget.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    document.querySelectorAll('.btn-link').forEach(b => {
+        b.classList.remove('border-bottom', 'border-2', 'border-dark', 'text-dark');
+        b.classList.add('text-muted');
+    });
+    document.getElementById(tabId).style.display = 'block';
+    evt.currentTarget.classList.add('border-bottom', 'border-2', 'border-dark', 'text-dark');
+    evt.currentTarget.classList.remove('text-muted');
 }
 </script>
 

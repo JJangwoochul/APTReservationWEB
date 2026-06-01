@@ -21,7 +21,7 @@
             if (reserve != null) {
                 int facilityNo = reserve.getFacilityNo();
                 //예약삭제
-                reserveDAO.deleteFacility(reserveNo);
+                reserveDAO.deleteReserve(reserveNo);
                 //quantity 1 감소
                 facilityDAO.decreaseQuantity(facilityNo);
             }
