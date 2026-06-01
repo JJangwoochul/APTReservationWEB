@@ -18,10 +18,14 @@
     ArrayList<ReserveDTO> activeList = dao.getActiveReservesByUser(userNo);
     ArrayList<ReserveDTO> historyList = dao.getRecentHistoryReservesByUser(userNo);
 
-    // 날짜 표시용: 이번 달 1일 ~ 이번 달 말일 계산
+    // 날짜 표시용: 지난달 기준으로 계산
     LocalDate now = LocalDate.now();
-    LocalDate firstDay = now.withDayOfMonth(1);          // 이번 달 1일
-    LocalDate lastDay = now.withDayOfMonth(now.lengthOfMonth()); // 이번 달 말일
+    LocalDate lastMonthDate = now.minusMonths(1); // 현재의 한 달 전 날짜
+    LocalDate firstDay = lastMonthDate.withDayOfMonth(1);          // 지난달 1일
+    LocalDate lastDay = lastMonthDate.withDayOfMonth(lastMonthDate.lengthOfMonth()); // 지난달 말일
+    
+    // 화면에 보여줄 '몇 월' 인지 계산
+    int targetMonth = lastMonthDate.getMonthValue();
 %>
 <html>
 <head>
@@ -82,11 +86,11 @@
     <%-- 2. 이용내역 탭 --%>
 <div id="history" class="tab-content" style="display: none;">
     <div class="alert alert-light border shadow-sm mb-4 small text-secondary">
-        <strong>6월 이용내역:</strong> <%= now.withDayOfMonth(1) %> ~ <%= now %>
+        <strong><%= targetMonth %>월 이용내역:</strong> <%= firstDay %> ~ <%= lastDay %>
     </div>
     
     <% if (historyList.isEmpty()) { %>
-        <div class="card p-4 text-center border-0 shadow-sm">6월 이용 내역이 없습니다.</div>
+        <div class="card p-4 text-center border-0 shadow-sm"><%= targetMonth %>월 이용 내역이 없습니다.</div>
     <% } else { 
          // 총합 계산용 변수 선언
          int total = 0;
