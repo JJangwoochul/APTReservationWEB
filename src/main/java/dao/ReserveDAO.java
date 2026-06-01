@@ -168,4 +168,36 @@ public class ReserveDAO {
         }
         return dto;
     }
+
+    // 8. 최근 1개월간의 이용 내역 조회 (이용내역 탭용)
+    public ArrayList<ReserveDTO> getRecentHistoryReservesByUser(int userNo) throws SQLException {
+        ArrayList<ReserveDTO> list = new ArrayList<>();
+    // useDate가 현재 날짜로부터 1개월 이내인 내역만 조회
+    // ORACLE 기준: ADD_MONTHS(SYSDATE, -1)
+        String sql = "SELECT * FROM reserve WHERE userNo = ? " +
+                    "AND status IN ('COMPLETED', 'CANCELLED') " +
+                    "AND useDate >= TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYY-MM-DD') " +
+                    "ORDER BY useDate DESC";
+
+        try (Connection conn = DBconn.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userNo);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    ReserveDTO dto = new ReserveDTO(
+                            rs.getInt("reserveNo"),
+                            rs.getInt("facilityNo"),
+                            rs.getInt("userNo"),
+                            rs.getString("reserveDate"),
+                            rs.getString("useDate"),
+                            rs.getInt("startTime"),
+                            rs.getInt("endTime"),
+                            rs.getInt("price"),
+                            rs.getString("status"));
+                    list.add(dto);
+                }
+            }
+        }
+        return list;
+    }
 }
