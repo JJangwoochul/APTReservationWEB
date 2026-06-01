@@ -53,6 +53,8 @@
     newReserve.setStatus("ACTIVE");
 
     reserveDAO.addReserve(newReserve);
+    // 게스트하우스 예약 성공 시 DB로 데이터가 넘어가면서 게스트하우스 시설의 quantity를 1증가
+    facilityDAO.increaseQuantity(facilityNo);
 
     response.sendRedirect("mypage01.jsp");
 %>

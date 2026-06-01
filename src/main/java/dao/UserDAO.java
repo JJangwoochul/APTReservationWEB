@@ -13,7 +13,8 @@ public class UserDAO {
     // (1) 회원가입: DB INSERT 구현 회원가입 성공시 1 반환, 실패시 0반환
     public int join(UserDTO user) {
         int result = 0;
-        // user_seq.nextval을 이용해 PK인 No를 DB에서 자동생성 , role에 USER를 넣어 가입하는 사람은 기본적으로  user권한을 갖고 가입
+        // user_seq.nextval을 이용해 PK인 No를 DB에서 자동생성 , role에 USER를 넣어 가입하는 사람은 기본적으로
+        // user권한을 갖고 가입
         String sql = "INSERT INTO users (userNo, userId, userPw, userName, phone, dong, ho, role) VALUES (user_seq.nextval, ?, ?, ?, ?, ?, ?, 'USER')";
 
         try (Connection conn = DBconn.getConnection();
@@ -78,5 +79,43 @@ public class UserDAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    // (4) 회원 삭제: DELETE 구현 (PK인 userNo 기준)
+    public void deleteMember(int userNo) throws java.sql.SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt1 = null; // 예약 내역 삭제용
+        PreparedStatement pstmt2 = null; // 회원 정보 삭제용
+
+        try {
+            conn = DBconn.getConnection();
+            conn.setAutoCommit(false); // 트랜잭션 시작
+
+            // 1. 해당 회원의 예약 내역 먼저 삭제 (reserve 테이블의 userNo FK 참조)
+            String sql1 = "DELETE FROM reserve WHERE userNo = ?";
+            pstmt1 = conn.prepareStatement(sql1);
+            pstmt1.setInt(1, userNo);
+            pstmt1.executeUpdate();
+
+            // 2. 회원 정보 삭제 (users 테이블의 userNo PK 참조)
+            String sql2 = "DELETE FROM users WHERE userNo = ?";
+            pstmt2 = conn.prepareStatement(sql2);
+            pstmt2.setInt(1, userNo);
+            pstmt2.executeUpdate();
+
+            conn.commit(); // 모두 성공 시 커밋
+        } catch (Exception e) {
+            if (conn != null)
+                conn.rollback(); // 실패 시 롤백
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (pstmt1 != null)
+                pstmt1.close();
+            if (pstmt2 != null)
+                pstmt2.close();
+            if (conn != null)
+                conn.close();
+        }
     }
 }

@@ -141,6 +141,7 @@
                     </div>
                     <div class="col-md-3 text-end">
                         <button class="btn btn-dark-custom" onclick="location.href='reserveCancel.jsp?reserveNo=<%= dto.getReserveNo() %>'">예약취소</button>
+                        <button class="btn btn-dark-custom" onclick="location.href='../facility/facility.jsp?no=<%= dto.getFacilityNo() %>'">상세보기</button>
                     </div>
                 </div>
             </div>

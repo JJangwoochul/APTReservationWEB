@@ -39,14 +39,14 @@ CREATE TABLE reserve (
 );
 
 CREATE TABLE facility (
-    facilityNo      NUMBER          PRIMARY KEY,        
-    facilityName    VARCHAR2(100)   NOT NULL,    
-    description     VARCHAR2(1000)  ,
-    facilityPrice   NUMBER,
-    condition       VARCHAR2(50),
-    peopleInStock   NUMBER,
-    fileName        VARCHAR2(200),
-    quantity        NUMBER          DEFAULT 0          
+    facilityNo      NUMBER          PRIMARY KEY,  -- 시설번호      
+    facilityName    VARCHAR2(100)   NOT NULL,      -- 시설 이름
+    description     VARCHAR2(1000)  ,           -- 시설 상세설명
+    facilityPrice   NUMBER,                     -- 시설 이용 가격
+    condition       VARCHAR2(50),               -- 시설 상태
+    peopleInStock   NUMBER,                     -- 수용인원
+    fileName        VARCHAR2(200),              -- 시설 사진 파일이름
+    quantity        NUMBER          DEFAULT 0   -- 예약중인 인원
 );
 
 -------------------------------------------------------

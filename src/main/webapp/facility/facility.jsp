@@ -76,9 +76,13 @@
                             </div>
                             
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-outline-primary px-3 py-2" onclick="reserve(<%=facility.getFacilityNo()%>)">
-                                    예약하기 &raquo;
-                                </button>
+                                <% if (facility.getFacilityNo() == 3) { %>
+                                <%-- 3번 시설(게스트하우스)일 경우 guesthouse.jsp로 이동 --%>
+                                    <button type="button" class="btn btn-dark px-3 py-2" onclick="location.href='guesthouse.jsp?no=<%=facility.getFacilityNo()%>'"> 예약하기 (게스트하우스) &raquo;</button>
+                                <% } else { %>
+                                <%-- 일반 시설일 경우 기존 reserve.jsp로 이동 --%>
+                                    <button type="button" class="btn btn-outline-primary px-3 py-2" onclick="reserve(<%=facility.getFacilityNo()%>)"> 예약하기 &raquo;</button>
+                                <% } %>
                                 <a href="./facilitys.jsp" class="btn btn-outline-secondary px-3 py-2" role="button">
                                     &laquo; 시설 목록 돌아가기
                                 </a>

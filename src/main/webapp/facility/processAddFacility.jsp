@@ -21,10 +21,12 @@
     String facilityPrice = request.getParameter("facilityPrice");
     String condition = request.getParameter("condition");
     String peopleInStock = request.getParameter("peopleInStock");
+    
 
     // 3. 숫자형 데이터 변환
     int price = (facilityPrice != null && !facilityPrice.isEmpty()) ? Integer.parseInt(facilityPrice) : 0;
     int stock = (peopleInStock != null && !peopleInStock.isEmpty()) ? Integer.parseInt(peopleInStock) : 0;
+    
 
     // 4. 파일 업로드 처리
     String fileName = "";
@@ -42,7 +44,7 @@
     dto.setCondition(condition);
     dto.setPeopleInStock(stock);
     dto.setFileName(fileName);
-    dto.setQuantity(quantity); 
+    dto.setQuantity(0); 
 
     // 6. DB 저장 (DAO 호출)
     try {

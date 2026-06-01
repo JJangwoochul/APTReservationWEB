@@ -64,6 +64,8 @@
     newReserve.setStatus("ACTIVE"); // 기본 상태값 설정
 
     reserveDAO.addReserve(newReserve);
+    // 예약확정 성공 이후 , DB에 저장하면서 해당 시설의 quantity를 1 증가시킴
+    facilityDAO.increaseQuantity(facilityNo);
 
     response.sendRedirect("mypage01.jsp");
 %>

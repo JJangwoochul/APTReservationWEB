@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=utf-8" %>
-<%@ page import="dao.ReserveDAO" %>
+<%@ page import="dao.ReserveDAO, dao.FacilityDAO, dto.ReserveDTO" %>
 <%
     // 1. 요청 인코딩 설정
     request.setCharacterEncoding("utf-8");
@@ -14,9 +14,19 @@
             
             // DAO를 사용하여 데이터베이스에서 삭제
             ReserveDAO reserveDAO = ReserveDAO.getInstance();
-            reserveDAO.deleteReserve(reserveNo);
+            FacilityDAO facilityDAO = FacilityDAO.getInstance();
+            //예약 시설번호 조회
+            ReserveDTO reserve = reserveDAO.getReserveByNo(reserveNo);
             
-        } catch (NumberFormatException e) {
+            if (reserve != null) {
+                int facilityNo = reserve.getFacilityNo();
+                //예약삭제
+                reserveDAO.deleteFacility(reserveNo);
+                //quantity 1 감소
+                facilityDAO.decreaseQuantity(facilityNo);
+            }
+            
+        } catch (Exception e) {
             // 숫자 변환 중 오류 발생 시 에러 로그 기록
             e.printStackTrace();
         }
