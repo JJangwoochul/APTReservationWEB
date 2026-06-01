@@ -49,8 +49,8 @@
                     <td><%= user.getDong() %></td>
                     <td><%= user.getHo() %></td>
                     <td>
-                        <button class="btn btn-sm btn-outline-secondary">수정</button>
-                        <button class="btn btn-sm btn-outline-danger">삭제</button>
+                        <a href="admin_edit_member.jsp?userNo=<%= user.getUserNo() %>" class="btn btn-sm btn-outline-secondary">수정</a>
+                        <a href="admin_deleteprocess_member.jsp?userNo=<%= user.getUserNo() %>" class="btn btn-sm btn-outline-danger" onclick="return confirm('정말 삭제하시겠습니까? 관련 예약 내역도 함께 삭제됩니다.')">삭제</a>
                     </td>
                 </tr>
                 <% } %>

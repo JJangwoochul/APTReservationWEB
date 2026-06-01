@@ -9,9 +9,8 @@
         String userPw = request.getParameter("userPw");
         String userName = request.getParameter("userName");
         String phone = request.getParameter("phone");
-        //동,호수를 int로 변환
-        int dong = Integer.parseInt(request.getParameter("dong"));
-        int ho = Integer.parseInt(request.getParameter("ho"));
+        String dong = request.getParameter("dong");
+        String ho = request.getParameter("ho");
         //유효성 검사
         if (userId == null || userId.trim().isEmpty() || userPw == null || userPw.trim().isEmpty()) {
             out.println("<script>alert('필수 입력 항목을 확인해주세요.'); history.back();</script>");

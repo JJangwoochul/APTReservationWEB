@@ -125,7 +125,7 @@ public class FacilityDAO {
         conn.setAutoCommit(false); 
         
         // 1. 해당 시설의 기존 예약 내역을 모두 삭제
-        String sql1 = "DELETE FROM reservation WHERE facilityNo = ?";
+        String sql1 = "DELETE FROM reserve WHERE facilityNo = ?";
         pstmt1 = conn.prepareStatement(sql1);
         pstmt1.setInt(1, dto.getFacilityNo());
         pstmt1.executeUpdate();

@@ -5,10 +5,10 @@
 <%@ page import="java.io.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="jakarta.servlet.http.*" %>
+<%@ page import="jakarta.servlet.annotation.MultipartConfig" %>
 
 <%
     request.setCharacterEncoding("UTF-8");
-//체크완
     // 1. 저장 경로 설정
     String realFolder = request.getServletContext().getRealPath("/resources/images");
     File dir = new File(realFolder);

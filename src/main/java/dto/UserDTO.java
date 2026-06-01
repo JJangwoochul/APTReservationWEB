@@ -11,8 +11,8 @@ public class UserDTO implements Serializable {
     private String userName; // 이름
     private String phone; // 연락처
     // 나중에 혹시 Reservation이 생기면 식별하기위해 입주민 인증을 위한 변수
-    private int dong; // 현재 살고있는 동
-    private int ho; // 현재 살고있는 호수
+    private String dong; // 현재 살고있는 동
+    private String ho; // 현재 살고있는 호수
     // 0528 추가코드 : 관리자 , 입주민 권한구분 필드
     private String role;
 
@@ -22,7 +22,7 @@ public class UserDTO implements Serializable {
         this.role = "USER";
     }
     //생성자 :회원가입 시 사용할 생성자 (userNo와 role 제외)
-    public UserDTO(String userId, String userPw, String userName, String phone, int dong, int ho) {
+    public UserDTO(String userId, String userPw, String userName, String phone, String dong, String ho) {
         super();
         this.userId = userId;
         this.userPw = userPw;
@@ -33,7 +33,7 @@ public class UserDTO implements Serializable {
         this.role = "USER"; // 기본 권한 설정
     }
     //생성자 : 로그인 이후 , 세션저장 , 목록조회 시 사용
-    public UserDTO(int userNo, String userId, String userPw, String userName, String phone, int dong, int ho,
+    public UserDTO(int userNo, String userId, String userPw, String userName, String phone, String dong, String ho,
             String role) {
         this.userNo = userNo;
         this.userId = userId;
@@ -85,19 +85,19 @@ public class UserDTO implements Serializable {
         this.phone = phone;
     }
 
-    public int getDong() {
+    public String getDong() {
         return dong;
     }
 
-    public void setDong(int dong) {
+    public void setDong(String dong) {
         this.dong = dong;
     }
 
-    public int getHo() {
+    public String getHo() {
         return ho;
     }
 
-    public void setHo(int ho) {
+    public void setHo(String ho) {
         this.ho = ho;
     }
 

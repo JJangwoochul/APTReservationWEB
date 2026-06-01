@@ -81,12 +81,12 @@
             <div class="row">
                 <div class="mb-4">
                     <label for="dong" class="form-label fw-bold">동</label>
-                    <input type="number" class="form-control form-control-lg" id="dong" name="dong" placeholder="ex) 101" required>
+                    <input type="text" class="form-control form-control-lg" id="dong" name="dong" placeholder="ex) 101" required>
                 </div>
 
                 <div class="mb-4">
                     <label for="ho" class="form-label fw-bold">호수</label>
-                    <input type="number" class="form-control form-control-lg" id="ho" name="ho" placeholder="ex) 201" required>
+                    <input type="text" class="form-control form-control-lg" id="ho" name="ho" placeholder="ex) 201" required>
                 </div>
             </div>
 

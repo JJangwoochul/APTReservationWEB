@@ -24,8 +24,8 @@ public class UserDAO {
             pstmt.setString(2, user.getUserPw());
             pstmt.setString(3, user.getUserName());
             pstmt.setString(4, user.getPhone());
-            pstmt.setInt(5, user.getDong());
-            pstmt.setInt(6, user.getHo());
+            pstmt.setString(5, user.getDong());
+            pstmt.setString(6, user.getHo());
 
             result = pstmt.executeUpdate();
         } catch (Exception e) {
@@ -49,8 +49,8 @@ public class UserDAO {
                 if (rs.next()) { // 로그인 성공했을 때 데이터가 1개만 반환
                     // DB에서 가져온 데이터를 UserDTO객체로 변환시킴
                     return new UserDTO(rs.getInt("userNo"), rs.getString("userId"), rs.getString("userPw"),
-                            rs.getString("userName"), rs.getString("phone"), rs.getInt("dong"),
-                            rs.getInt("ho"), rs.getString("role"));
+                            rs.getString("userName"), rs.getString("phone"), rs.getString("dong"),
+                            rs.getString("ho"), rs.getString("role"));
                 }
             }
         } catch (Exception e) {
@@ -72,8 +72,8 @@ public class UserDAO {
 
             while (rs.next()) {
                 list.add(new UserDTO(rs.getInt("userNo"), rs.getString("userId"), rs.getString("userPw"),
-                        rs.getString("userName"), rs.getString("phone"), rs.getInt("dong"),
-                        rs.getInt("ho"), rs.getString("role")));
+                        rs.getString("userName"), rs.getString("phone"), rs.getString("dong"),
+                        rs.getString("ho"), rs.getString("role")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,6 +116,50 @@ public class UserDAO {
                 pstmt2.close();
             if (conn != null)
                 conn.close();
+        }
+    }
+
+    // (5) 회원 상세 조회: 1명의 회원 정보 가져오기
+    public UserDTO getMemberByNo(int userNo) {
+        String sql = "SELECT * FROM users WHERE userNo = ?";
+        try (Connection conn = DBconn.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userNo);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new UserDTO(rs.getInt("userNo"), rs.getString("userId"), rs.getString("userPw"),
+                            rs.getString("userName"), rs.getString("phone"), rs.getString("dong"),
+                            rs.getString("ho"), rs.getString("role"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // (6) 회원 정보 수정: UPDATE 구현
+    // 관리자가 수정 가능한 필드들을 업데이트합니다.
+    public void updateMember(UserDTO user) throws java.sql.SQLException {
+        String sql = "UPDATE users SET userName=?, phone=?, dong=?, ho=?, role=? WHERE userNo=?";
+
+        try (Connection conn = DBconn.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+           
+            pstmt.setString(1, user.getUserName());
+            pstmt.setString(2, user.getPhone());
+            pstmt.setString(3, user.getDong());
+            pstmt.setString(4, user.getHo());
+            pstmt.setString(5, user.getRole());
+            pstmt.setInt(6, user.getUserNo()); // WHERE절의 PK 조건
+
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e; 
         }
     }
 }

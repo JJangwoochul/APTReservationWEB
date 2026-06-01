@@ -2,10 +2,16 @@
 <%@ page import="dao.UserDAO" %>
 <%
     request.setCharacterEncoding("utf-8");
-    String userId = request.getParameter("userId");
     
-    UserDAO dao = new UserDAO();
-    dao.deleteMember(userId); // DAO에 메서드 추가 필요
+    String userNoStr = request.getParameter("userNo");
+    
+    // 정수형 변환
+    if (userNoStr != null && !userNoStr.isEmpty()) {
+        int userNo = Integer.parseInt(userNoStr);
+        
+        UserDAO dao = new UserDAO();
+        dao.deleteMember(userNo);
+    }
     
     response.sendRedirect("admin_memberList.jsp");
 %>
