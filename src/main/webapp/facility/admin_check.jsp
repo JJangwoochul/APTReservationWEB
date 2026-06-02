@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=utf-8" %>
 <%
-//체크완
+//어드민 권한 확인 페이지
     // (1) 세션에서 현재 로그인한 사용자의 권한(role) 정보를 가져옴
     // header.jsp의 'role' 변수와 충돌하지 않도록 변수명 변경
     String adminCheckRole = (String) session.getAttribute("sessionRole");
