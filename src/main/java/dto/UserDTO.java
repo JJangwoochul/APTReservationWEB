@@ -5,23 +5,21 @@ import java.io.Serializable;
 public class UserDTO implements Serializable {
     private static final long serialVersionUID = 3L;
 
-    private int userNo; // 0529 수정코드 : userNo (유저테이블의 pk)
+    private int userNo; // 유저 넘버
     private String userId; // 회원 아이디
     private String userPw; // 비밀번호
     private String userName; // 이름
     private String phone; // 연락처
-    // 나중에 혹시 Reservation이 생기면 식별하기위해 입주민 인증을 위한 변수
     private String dong; // 현재 살고있는 동
     private String ho; // 현재 살고있는 호수
-    // 0528 추가코드 : 관리자 , 입주민 권한구분 필드
-    private String role;
+    private String role; // 권한 (user or admin)
 
     public UserDTO() {
         super();
-        // 0528 추가코드 : 기본권한을 입주민(USER)으로 설정
+        // 기본 권한을 user로 설정
         this.role = "USER";
     }
-    //생성자 :회원가입 시 사용할 생성자 (userNo와 role 제외)
+
     public UserDTO(String userId, String userPw, String userName, String phone, String dong, String ho) {
         super();
         this.userId = userId;
@@ -30,9 +28,9 @@ public class UserDTO implements Serializable {
         this.phone = phone;
         this.dong = dong;
         this.ho = ho;
-        this.role = "USER"; // 기본 권한 설정
+        this.role = "USER";
     }
-    //생성자 : 로그인 이후 , 세션저장 , 목록조회 시 사용
+
     public UserDTO(int userNo, String userId, String userPw, String userName, String phone, String dong, String ho,
             String role) {
         this.userNo = userNo;
