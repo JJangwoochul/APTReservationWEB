@@ -162,4 +162,19 @@ public class UserDAO {
             throw e; 
         }
     }
+    public UserDTO getMemberByUserId(String userId) {
+        String sql = "SELECT * FROM users WHERE userId = ?";
+        try (Connection conn = DBconn.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new UserDTO(rs.getInt("userNo"), rs.getString("userId"), "PROTECTED",
+                            rs.getString("userName"), rs.getString("phone"), rs.getString("dong"),
+                            rs.getString("ho"), rs.getString("role"));
+                }
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return null;
+    }
 }
