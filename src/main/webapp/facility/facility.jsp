@@ -3,9 +3,6 @@
 <%@ page import="dao.FacilityDAO" %>
 <%@ page errorPage="exceptionNoFacilityName.jsp" %>
 <%
-    // 세션에서 로그인 정보를 가져옵니다.
-    Integer userNo = (Integer) session.getAttribute("userNo");
-
     // 로그인 정보가 없으면 로그인 페이지로 보냅니다.
     if (session.getAttribute("sessionId") == null) {
         response.sendRedirect(request.getContextPath() + "/facility/login.jsp");
