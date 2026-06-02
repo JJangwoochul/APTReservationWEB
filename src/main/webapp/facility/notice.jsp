@@ -3,7 +3,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="dao.NoticeDAO" %>
 <%@ page import="dto.NoticeDTO" %>
-
+<%-- 공지사항 페이지 --%>
 <%
     //데이터 조회: 페이지가 열리면 DB에서 게시글 리스트를 가져옴
     NoticeDAO dao = NoticeDAO.getInstance();
