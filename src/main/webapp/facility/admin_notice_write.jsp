@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8" %>
 <%-- (1) 관리자 권한 확인 (문지기 역할) --%>
 <%@ include file="admin_check.jsp" %> 
-
+<%-- 공지사항 작성 페이지--%>
 <!DOCTYPE html>
 <html>
 <head>
