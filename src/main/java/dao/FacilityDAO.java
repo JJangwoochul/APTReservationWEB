@@ -4,15 +4,16 @@ import java.sql.*;
 import java.util.ArrayList;
 import dto.FacilityDTO;
 
+//Facility관련 로직처리 클래스
 public class FacilityDAO {
 
-    // 싱글톤 패턴: 단 하나의 인스턴스만 생성하여 공유
+    // 싱글톤 패턴: 단 하나의 인스턴스만 생성
     private static FacilityDAO instance = new FacilityDAO();
-
+    // 외부에서 접근가능 메서드
     public static FacilityDAO getInstance() {
         return instance;
     }
-
+    //싱글톤 유지
     private FacilityDAO() {
     }
 
@@ -28,7 +29,7 @@ public class FacilityDAO {
             conn = DBconn.getConnection();
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
-
+            //RS반복 , 리스트 생성
             while (rs.next()) {
                 FacilityDTO dto = new FacilityDTO();
                 dto.setFacilityNo(rs.getInt("facilityNo"));
@@ -42,6 +43,7 @@ public class FacilityDAO {
                 list.add(dto);
             }
         } finally {
+            //자원해제 -> DB 연동 누수방지
             if (rs != null)
                 rs.close();
             if (pstmt != null)
@@ -122,9 +124,10 @@ public class FacilityDAO {
 
     try {
         conn = DBconn.getConnection();
+        //트랜잭션
         conn.setAutoCommit(false); 
         
-        // 1. 해당 시설의 기존 예약 내역을 모두 삭제
+        // 1. 해당 시설의 기존 예약 내역을 모두 삭제 , UPDATE(수정) 전 초기화작업
         String sql1 = "DELETE FROM reserve WHERE facilityNo = ?";
         pstmt1 = conn.prepareStatement(sql1);
         pstmt1.setInt(1, dto.getFacilityNo());
