@@ -7,6 +7,25 @@
 </head>
 <body class="bg-light">
 <%
+    // 서버에서 전달된 에러 코드 확인 및 알림 처리
+    String error = request.getParameter("error");
+    if (error != null) {
+        String msg = "";
+        if (error.equals("login_failed")) msg = "아이디 또는 비밀번호가 일치하지 않습니다.";
+        else if (error.equals("empty_fields")) msg = "아이디와 비밀번호를 모두 입력하세요.";
+        
+        if (!msg.isEmpty()) {
+%>
+            <script>
+                alert("<%= msg %>");
+                history.replaceState({}, null, location.pathname); // URL 깔끔하게 정리
+            </script>
+<%
+        }
+    }
+%>
+
+<%
     // 카카오 앱 정보 설정
     String clientId = "3304185bc7ec807d4a6b7fb8f9b3bf11"; 
     String redirectUri = "http://localhost:8080/aptweb/facility/kakaoCallback.jsp";
@@ -48,14 +67,10 @@
             </div>
         </form>
 
-        <a href="<%= kakaoAuthUrl %>" 
-   class="btn w-100 d-flex justify-content-center align-items-center" 
-   style="background-color: #FEE500; color: #000000; font-weight: bold; border-radius: 6px; height: 45px; text-decoration: none;">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chat-fill me-2" viewBox="0 0 16 16">
-        <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15z"/>
-    </svg>
-    카카오 로그인
-</a>
+        <a href="<%= kakaoAuthUrl %>" class="btn w-100" style="background-color: #FEE500; color: #000000; font-weight: bold; border-radius: 6px; height: 45px; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+            <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" style="width: 20px; margin-right: 10px;">
+            카카오 로그인
+        </a>
     </div>
 </div>
 
