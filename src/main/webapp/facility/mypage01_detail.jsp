@@ -11,6 +11,8 @@
     
     FacilityDAO facilityDAO = FacilityDAO.getInstance();
     FacilityDTO facilityDTO = facilityDAO.getFacilityByNo(reserveDTO.getFacilityNo());
+
+    boolean isGuesthouse = (facilityDTO != null && "게스트하우스".equals(facilityDTO.getFacilityName()));
 %>
 <html>
 <head>
@@ -34,17 +36,26 @@
                         <div class="card-body p-5">
                             <h2 class="fw-bold text-primary mb-3"><%= facilityDTO.getFacilityName() %></h2>
                             <p class="text-muted mb-4" style="white-space: pre-wrap;"><%= facilityDTO.getDescription() %></p>
-                            
                             <hr class="mb-4">
                             
                             <div class="row mb-3">
                                 <div class="col-sm-4 fw-bold text-secondary">예약 일자</div>
                                 <div class="col-sm-8"><%= reserveDTO.getReserveDate() %></div>
                             </div>
+
+                            <%-- (3) 조건부 렌더링 , 게스트하우스 표시 --%>
+                            <% if (isGuesthouse) { %>
+                                <div class="row mb-3">
+                                    <div class="col-sm-4 fw-bold text-secondary">체크인 날짜</div>
+                                    <div class="col-sm-8"><%= reserveDTO.getUseDate() %></div>
+                                </div>
+                            <% } else { %>
+                            <%-- 일반시설 표시--%>
                             <div class="row mb-3">
                                 <div class="col-sm-4 fw-bold text-secondary">이용 시간</div>
                                 <div class="col-sm-8"><%= reserveDTO.getStartTime() %>:00 ~ <%= reserveDTO.getEndTime() %>:00</div>
                             </div>
+                            <% } %>
                             <div class="row mb-4">
                                 <div class="col-sm-4 fw-bold text-secondary">결제 금액</div>
                                 <div class="col-sm-8 fw-bold text-danger fs-5"><%= String.format("%,d", reserveDTO.getPrice()) %> 원</div>

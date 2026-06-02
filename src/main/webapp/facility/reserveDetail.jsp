@@ -125,18 +125,18 @@
                         <div class="col-6">
                             <% if (isGuesthouse) { %>
                                 <%-- 게스트하우스용 예약 처리 폼 --%>
-                                <form name="realReserveForm" action="./processGuesthouse.jsp" method="post" class="m-0">
+                                <form name="guesthouseForm" action="./processGuesthouse.jsp" method="post" class="m-0">
                                     <input type="hidden" name="facilityNo" value="<%= facility != null ? facility.getFacilityNo() : 0 %>">
                                     <input type="hidden" name="userNo" value="<%= userNo %>">
                                     <input type="hidden" name="reserveDate" value="<%= reserveDate %>">
                                     <input type="hidden" name="stayDays" value="<%= stayDays %>">
                                     <input type="hidden" name="useDate" value="<%= reserveDate %>">
                                     <input type="hidden" name="price" value="<%= facility != null ? facility.getFacilityPrice() * Integer.parseInt(stayDays) : 0 %>">
-                                    <button type="button" class="btn btn-dark btn-lg w-100 fw-bold shadow-sm" onclick="confirmReservation()">예약확정</button>
+                                    <button type="button" class="btn btn-dark btn-lg w-100 fw-bold shadow-sm" onclick="confirmReservation('guesthouse')">예약확정</button>
                                 </form>
                             <% } else { %>
                                 <%-- 일반 시설용 예약 처리 폼 --%>
-                                <form name="realReserveForm" action="./processReserve.jsp" method="post" class="m-0">
+                                <form name="facilityForm" action="./processReserve.jsp" method="post" class="m-0">
                                     <input type="hidden" name="facilityNo" value="<%= facility != null ? facility.getFacilityNo() : 0 %>">
                                     <input type="hidden" name="userNo" value="<%= userNo %>">
                                     <input type="hidden" name="reserveDate" value="<%= reserveDate %>">
@@ -144,7 +144,7 @@
                                     <input type="hidden" name="startTime" id="startTime" value="9">
                                     <input type="hidden" name="endTime" id="endTime" value="18">
                                     <input type="hidden" name="price" value="<%= facility != null ? facility.getFacilityPrice() : 0 %>">
-                                    <button type="button" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" onclick="confirmReservation()">예약확정</button>
+                                    <button type="button" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" onclick="confirmReservation('facilityForm')">예약확정</button>
                                 </form>
                             <% } %>
                         </div>

@@ -3,7 +3,7 @@
 <%@ page import="dao.ReserveDAO" %>
 <%@ page import="dto.FacilityDTO" %>
 <%@ page import="dao.FacilityDAO" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.*" %>
 
 <%
     request.setCharacterEncoding("utf-8");
