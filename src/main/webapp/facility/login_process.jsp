@@ -12,7 +12,7 @@
     // 유효성 검사: 필수 입력값 확인
     // trim()을 이용해 공백만 입력한 경우도 필터링
     if(userId == null || userId.trim().isEmpty() || userPw == null || userPw.trim().isEmpty()) {
-        out.println("<script>alert('아이디와 비밀번호를 모두 입력하세요.'); history.back();</script>");
+        response.sendRedirect("login.jsp?error=empty_fields");
         return; // 아래 로직이 실행되지 않도록 중단합니다.
     }
 
@@ -36,6 +36,6 @@
         response.sendRedirect(request.getContextPath() + "/facility/welcome.jsp");
     } else {
         // 실패: 경고창을 띄우고 이전 페이지로 돌아가기
-        out.println("<script>alert('아이디 또는 비밀번호가 일치하지 않습니다.'); history.back();</script>");
+        response.sendRedirect("login.jsp?error=login_failed");
     }
 %>
