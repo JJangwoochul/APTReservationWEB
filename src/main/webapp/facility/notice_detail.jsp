@@ -3,8 +3,7 @@
 <%@ page import="dao.NoticeDAO" %>
 <%@ page import="dto.NoticeDTO" %>
 <%
-//체크완
-// 공지사항 상세보기 확인
+// 공지사항 상세보기
 
     // 파라미터 받기 및 데이터 조회
     //id가 null이면 잘못된접근 메세지 출력 (보안강화)
