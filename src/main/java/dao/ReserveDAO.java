@@ -203,15 +203,16 @@ public class ReserveDAO {
     }
 
     // (9) 특정 시설의 특정 날짜 예약 건수 조회 (정원 체크용 추가)
-    public int getReservedCount(int facilityNo, String useDate) throws SQLException {
+    public int getReservedCount(int facilityNo, String useDate, int startTime) throws SQLException {
         int count = 0;
-        String sql = "SELECT COUNT(*) FROM reserve WHERE facilityNo = ? AND useDate = ? AND status = 'ACTIVE'";
+        String sql = "SELECT COUNT(*) FROM reserve WHERE facilityNo = ? AND useDate = ? AND startTime = ? AND status = 'ACTIVE'";
 
         try (Connection conn = DBconn.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, facilityNo);
             pstmt.setString(2, useDate);
+            pstmt.setInt(3, startTime);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {

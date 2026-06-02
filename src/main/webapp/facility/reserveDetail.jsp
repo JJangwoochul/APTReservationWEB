@@ -132,7 +132,7 @@
                                     <input type="hidden" name="stayDays" value="<%= stayDays %>">
                                     <input type="hidden" name="useDate" value="<%= reserveDate %>">
                                     <input type="hidden" name="price" value="<%= facility != null ? facility.getFacilityPrice() * Integer.parseInt(stayDays) : 0 %>">
-                                    <button type="button" class="btn btn-dark btn-lg w-100 fw-bold shadow-sm" onclick="confirmReservation('guesthouse')">예약확정</button>
+                                    <button type="button" class="btn btn-dark btn-lg w-100 fw-bold shadow-sm" onclick="confirmReservation('guesthouseForm')">예약확정</button>
                                 </form>
                             <% } else { %>
                                 <%-- 일반 시설용 예약 처리 폼 --%>

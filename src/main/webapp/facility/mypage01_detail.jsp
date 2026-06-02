@@ -47,7 +47,7 @@
                             <% if (isGuesthouse) { %>
                                 <div class="row mb-3">
                                     <div class="col-sm-4 fw-bold text-secondary">체크인 날짜</div>
-                                    <div class="col-sm-8"><%= reserveDTO.getUseDate() %></div>
+                                    <div class="col-sm-8"><%= reserveDTO.getUseDate().substring(0,10) %></div>
                                 </div>
                             <% } else { %>
                             <%-- 일반시설 표시--%>

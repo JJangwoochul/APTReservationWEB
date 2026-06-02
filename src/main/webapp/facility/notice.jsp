@@ -96,9 +96,10 @@
                 <% 
                     //데이터 출력,검증 -> 리스트가 null인지 체크
                     if(list != null && !list.isEmpty()) { 
+                        int count = list.size();
                     for(NoticeDTO notice : list) { %>
                     <tr>
-                        <td class="text-center text-muted"><%= notice.getNoticeNo() %></td>
+                        <td class="text-center text-muted"><%= count-- %></td>
                         <td><a href="<%= request.getContextPath() %>/facility/notice_detail.jsp?id=<%= notice.getNoticeNo() %>" class="notice-link"><%= notice.getTitle() %></a></td>
                         <%--날짜 확인 ->결과를 10글자로 짤라 YYYY-MM-DD형태로 보이게 함--%>
                         <td class="text-center text-muted"><%= notice.getRegDate() != null ? notice.getRegDate().toString().substring(0, 10) : "날짜없음" %></td>
