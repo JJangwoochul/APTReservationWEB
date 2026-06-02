@@ -45,6 +45,7 @@
     int endTime = Integer.parseInt(endTimeParam);
     
     String status = "ACTIVE"; // 기본값
+
     // 이용 종료 시간이 현재 시간보다 작거나 같으면 '이용 완료' 상태로 저장
     if (endTime <= currentHour) {
         status = "COMPLETED";

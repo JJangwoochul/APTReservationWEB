@@ -6,29 +6,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>예약 확인 및 확정</title>
     <script type="text/javascript">
-         // 선택한 시작 시간에 맞춰 종료 시간 자동 계산
+        // 선택한 시작 시간에 맞춰 종료 시간 자동 계산
         function updateTimeValues() {
-        var start = parseInt(document.getElementById("startTimeSelect").value);
-        var end = start + 2;
-    
-        var displayEnd = end;
-        var dayLabel = "";
-    
-        // 24시가 넘어가면 날짜 처리
-        if (end >= 24) {
-            displayEnd = end - 24; // 예: 25시면 1시로 표시
-            dayLabel = " (다음날)";
-        }
+            var select = document.getElementById("startTimeSelect");
+            if (!select) return; // 게스트하우스인 경우 select가 없으므로 종료
+            
+            var start = parseInt(select.value);
+            var end = start + 2;
+            var displayEnd = (end > 24) ? end - 24 : end;
+            var dayLabel = (end > 24) ? " (다음날)" : "";
     
             document.getElementById("startTime").value = start;
-            document.getElementById("endTime").value = end; // DB 저장은 25시로 해도 무방합니다.
+            document.getElementById("endTime").value = end;
             document.getElementById("timeDisplay").innerText = 
-        start + ":00 ~ " + displayEnd + ":00" + dayLabel;
+                start + ":00 ~ " + displayEnd + ":00" + dayLabel;
         }
-        // 예약 확정 버튼 클릭 시, 숨겨진 폼을 서버로 전송하는 함수
-        function confirmReservation() {
-            updateTimeValues();
-            document.realReserveForm.submit();
+        // 예약 확정 버튼 클릭 시, 해당 유형의 폼을 서버로 전송
+        function confirmReservation(formName) {
+            // 일반 시설인 경우에만 시간값 업데이트 실행
+            if (formName === "facilityForm") {
+                updateTimeValues();
+            }
+            document.forms[formName].submit();
         }
     </script>
 </head>
@@ -57,11 +56,9 @@
                     // (1) 최종 금액 계산 로직 분리
                     int finalPrice = 0;
                     if (facility != null) {
-                        if (isGuesthouse) {
-                            finalPrice = facility.getFacilityPrice() * Integer.parseInt(stayDays);
-                        } else {
-                            finalPrice = facility.getFacilityPrice();
-                        }
+                        if (facility != null) {
+                        finalPrice = isGuesthouse ? (facility.getFacilityPrice() * Integer.parseInt(stayDays)) : facility.getFacilityPrice();
+                    }
                     }
                 %>
                 
@@ -144,8 +141,8 @@
                                     <input type="hidden" name="userNo" value="<%= userNo %>">
                                     <input type="hidden" name="reserveDate" value="<%= reserveDate %>">
                                     <input type="hidden" name="useDate" value="<%= reserveDate %>">
-                                    <input type="hidden" name="startTime" value="9">
-                                    <input type="hidden" name="endTime" value="18">
+                                    <input type="hidden" name="startTime" id="startTime" value="9">
+                                    <input type="hidden" name="endTime" id="endTime" value="18">
                                     <input type="hidden" name="price" value="<%= facility != null ? facility.getFacilityPrice() : 0 %>">
                                     <button type="button" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm" onclick="confirmReservation()">예약확정</button>
                                 </form>

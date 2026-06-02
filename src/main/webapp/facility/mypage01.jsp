@@ -13,6 +13,7 @@
         response.sendRedirect("../member/login.jsp");
         return;
     }
+    int currentHour = LocalTime.now().getHour();
 
     // (2) 상태별 리스트 조회 (이용내역은 최근 1개월 메서드 호출)
     ArrayList<ReserveDTO> activeList = dao.getActiveReservesByUser(userNo);
@@ -26,6 +27,7 @@
     
     // 화면에 보여줄 '몇 월' 인지 계산
     int targetMonth = lastMonthDate.getMonthValue();
+    
 %>
 <html>
 <head>
