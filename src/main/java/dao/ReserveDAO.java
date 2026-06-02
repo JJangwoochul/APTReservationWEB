@@ -3,16 +3,16 @@ package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import dto.ReserveDTO;
-
+// 예약 시스템 클래스 , 예약 생성,조회,취소,완료 등 
 public class ReserveDAO {
-    // (1) 싱글톤 인스턴스: 유일한 객체 생성
+    // 인스턴스 생성
     private static ReserveDAO instance = new ReserveDAO();
 
-    // (2) 생성자를 private으로 선언하여 외부에서 객체 생성 차단
+    // 생성자를 private으로 선언하여 외부에서 객체 생성 차단
     private ReserveDAO() {
     }
 
-    // (3) 외부에서 싱글톤 객체에 접근하기 위한 메서드
+    // 외부에서 싱글톤 객체에 접근하기 위한 메서드
     public static ReserveDAO getInstance() {
         return instance;
     }
@@ -22,7 +22,7 @@ public class ReserveDAO {
         ArrayList<ReserveDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM reserve";
 
-        // (4) Try-with-resources 적용으로 자원 누수 완벽 차단
+        // Try-with-resources 적용으로 자원 누수 완벽 차단
         try (Connection conn = DBconn.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 ResultSet rs = pstmt.executeQuery()) {
@@ -48,7 +48,7 @@ public class ReserveDAO {
     public void addReserve(ReserveDTO dto) throws SQLException {
         String sql = "INSERT INTO reserve (reserveNo, facilityNo, userNo, reserveDate, useDate, startTime, endTime, price, status) "
                 + "VALUES (reserve_seq.NEXTVAL, ?, ?, SYSDATE, ?, ?, ?, ?, ?)";
-
+                    //SQL 문에 SysDate 사용 -> 현재 시간 기록
         try (Connection conn = DBconn.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, dto.getFacilityNo());
@@ -63,6 +63,7 @@ public class ReserveDAO {
     }
 
     // 3. 사용자별 예약 목록 조회
+    //status로 상태 구분 -> ACTIVE(예약중) , 외 나머지
     public ArrayList<ReserveDTO> getActiveReservesByUser(int userNo) throws SQLException {
         ArrayList<ReserveDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM reserve WHERE userNo = ? AND status = 'ACTIVE' ORDER BY reserveDate ASC";
