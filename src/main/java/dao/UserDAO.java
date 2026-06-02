@@ -162,6 +162,7 @@ public class UserDAO {
             throw e; 
         }
     }
+    // (7) Id로 회원 조회 , userPw 는 안보이게 처리
     public UserDTO getMemberByUserId(String userId) {
         String sql = "SELECT * FROM users WHERE userId = ?";
         try (Connection conn = DBconn.getConnection();
