@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=utf-8" %>
-<%@ page import="dto.FacilityDTO, dao.FacilityDAO" %>
+<%@ page import="dto.FacilityDTO, dao.FacilityDAO, java.time.*" %>
 <%@ page errorPage="exceptionNoFacilityName.jsp" %>
 <html>
 <head>
@@ -52,6 +52,12 @@
                     // 2. DB에서 시설 정보 조회
                     FacilityDAO dao = FacilityDAO.getInstance();
                     FacilityDTO facility = dao.getFacilityByNo(facilityNo);
+
+                    // 오늘 날짜 및 현재 시간 관련 변수 설정
+                    java.time.LocalDate today = java.time.LocalDate.now();
+                    java.time.LocalDate reserveDateObj = java.time.LocalDate.parse(reserveDate);
+                    boolean isToday = reserveDateObj.equals(today);
+                    int currentHour = java.time.LocalTime.now().getHour();
                     
                     // 3. 상태값 설정 (게스트하우스 여부 확인 및 최종 금액 계산)
                     int userNo = (session.getAttribute("userNo") != null) ? (Integer) session.getAttribute("userNo") : 0;
@@ -104,6 +110,11 @@
                                     <select id="startTimeSelect" class="form-select form-select-sm" onchange="updateTimeValues()">
                                     <% 
                                         for(int i = 0; i <= 23; i++) { 
+                                        // 오늘 날짜이고, 현재 시간보다 작은(이미 지난) 시간은 옵션에서 제외(continue)
+                                        if (isToday && i < currentHour) {
+                                            continue; 
+                                         }
+        
                                         int end = i + 2;
                                         String display = i + ":00 ~ " + (end > 24 ? end - 24 : end) + ":00" + (end > 24 ? " (다음날)" : "");
                                     %>
