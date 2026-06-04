@@ -1,8 +1,9 @@
 <%@ page contentType="text/html; charset=utf-8" %>
-<%@ include file="admin_check.jsp" %> <%--관리자만 이용 가능--%>
+<%@ include file="admin_check.jsp" %> <%-- [보안] 관리자 세션 체크: 접근 권한 제한 --%>
 <html>
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <%-- [유효성 검사] 전송 전 클라이언트 측 데이터 검증을 위한 외부 JS 연결 --%>
     <script type="text/javascript" src="/aptweb/resources/js/validation.js?v=1"></script>
     <title>시설 등록</title>
 </head>
@@ -17,6 +18,8 @@
 
     <div class="row justify-content-center my-4">
         <div class="col-md-8 bg-white p-5 rounded-3 shadow-sm border">
+            <%-- [전송 방식] enctype="multipart/form-data": 이미지 파일을 포함한 폼 전송 방식 --%>
+            <%-- [검증 로직] onsubmit 호출 시 validation.js의 CheckAddFacility() 실행 --%>
             <form name="newFacility" action="./processAddFacility.jsp" method="post" 
                   enctype="multipart/form-data" onsubmit="return CheckAddFacility()">
 
