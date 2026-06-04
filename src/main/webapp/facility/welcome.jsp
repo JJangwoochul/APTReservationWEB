@@ -41,7 +41,7 @@
                             }
                             String CT = hour + ":" + minute + ":" + second + " " + am_pm;
                             out.print("현재 접속 시각: " + CT);
-                            response.setIntHeader("Refresh", 5);
+                            response.setIntHeader("Refresh", 60);
                         %>
                     </span>
                 </div>

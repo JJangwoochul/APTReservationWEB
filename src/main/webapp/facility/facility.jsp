@@ -74,8 +74,8 @@
                             </div>
                             
                             <div class="d-grid gap-2">
-                                <% if (facility.getFacilityNo() == 3) { %>
-                                <%-- 3번 시설(게스트하우스)일 경우 guesthouse.jsp로 이동 --%>
+                                <% if ("게스트하우스".equals(facility.getFacilityName())) { %>
+                                <%-- 이름이 "게스트하우스"이면 모두 guesthouse.jsp로 이동 --%>
                                     <button type="button" class="btn btn-dark px-3 py-2" onclick="location.href='guesthouse.jsp?no=<%=facility.getFacilityNo()%>'"> 예약하기 (게스트하우스) &raquo;</button>
                                 <% } else { %>
                                 <%-- 일반 시설일 경우 기존 reserve.jsp로 이동 --%>

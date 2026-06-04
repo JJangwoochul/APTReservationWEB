@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8" %>
 <%@ page import="dao.UserDAO" %>
 <%@ page import="dto.UserDTO" %>
+<%@ page import="java.net.URLEncoder" %>
 <%
 // 로그인 결과 확인
     request.setCharacterEncoding("utf-8");
@@ -29,13 +30,14 @@
         session.setAttribute("sessionUser", loginUser); // 객체 전체를 담아두면 어디서든 정보 활용 가능
         session.setAttribute("sessionRole", loginUser.getRole()); // 권한 확인용 세션
 
-        // 예약 기능에서 사용할 userNo 세션 추가 저장(민관 추가)
+        // 예약 기능에서 사용할 userNo 세션 추가 저장
         session.setAttribute("userNo", loginUser.getUserNo());
         
         // 메인 페이지로 이동
         response.sendRedirect(request.getContextPath() + "/facility/welcome.jsp");
     } else {
         // 실패: 경고창을 띄우고 이전 페이지로 돌아가기
-        response.sendRedirect("login.jsp?error=login_failed");
+        String encodedId = URLEncoder.encode(userId, "UTF-8");
+        response.sendRedirect("login.jsp?error=login_failed&userId=" + encodedId);
     }
 %>

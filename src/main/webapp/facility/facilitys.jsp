@@ -32,7 +32,7 @@
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body p-4 text-center">
                     <img src="/aptweb/resources/images/<%=facility.getFileName() %>" style="width:350px; height:350px;" />
-                    <h5 class="fw-bold text-primary mb-3">No.<%=facility.getFacilityNo()%> <%=facility.getFacilityName()%></h5>
+                    <h5 class="fw-bold text-primary mb-3"><%=facility.getFacilityName()%></h5>
                     <hr>
                     <p class="mb-1"><b>이용 금액 :</b> <%=facility.getFacilityPrice()%>원</p>
                     <p class="mb-1"><b>시설 상태 :</b> <%=facility.getCondition()%></p>

@@ -11,7 +11,7 @@
         // (3) 보안 처리 : 유저 접근임을 알리고 로그인 페이지나 메인으로 이동
         out.println("<script>");
         out.println("alert('관리자 전용 페이지입니다. 접근 권한이 없습니다.');");
-        out.println("location.href='" + request.getContextPath() + "/facility/login.jsp';"); 
+        out.println("location.href='" + request.getContextPath() + "/facility/welcome.jsp';"); 
         out.println("</script>");
         return; // 페이지 로딩 즉시 중단
     }

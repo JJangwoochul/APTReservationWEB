@@ -26,8 +26,8 @@
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
         StringBuilder sb = new StringBuilder();
         sb.append("grant_type=authorization_code");
-        sb.append("&client_id=3304185bc7ec807d4a6b7fb8f9b3bf11");
-        sb.append("&client_secret=KasDJAXMHQMkyjIJzbMQnClo0TASp2eO");
+        sb.append("&client_id=3304185bc7ec807d4a6b7fb8f9b3bf11"); // REST API 키
+        sb.append("&client_secret=KasDJAXMHQMkyjIJzbMQnClo0TASp2eO"); // 시크릿 키
         sb.append("&redirect_uri=http://localhost:8080/aptweb/facility/kakaoCallback.jsp");
         sb.append("&code=").append(code);
 

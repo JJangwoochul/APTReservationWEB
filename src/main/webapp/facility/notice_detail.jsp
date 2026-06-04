@@ -96,7 +96,7 @@
     <div class="detail-box">
         
         <div class="detail-header">
-            <div class="detail-title"><%= notice.getNoticeNo() %>. <%= notice.getTitle() %></div>
+            <div class="detail-title"><%= notice.getTitle() %></div>
             <div class="detail-info d-flex justify-content-between">
                 <div><strong>작성자:</strong> 관리사무소</div>
                 <div><strong>작성일:</strong> <%= notice.getRegDate() != null ? notice.getRegDate().toString().substring(0, 10) : "날짜없음" %></div>

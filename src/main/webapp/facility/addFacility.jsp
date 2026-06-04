@@ -4,7 +4,7 @@
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <%-- [유효성 검사] 전송 전 클라이언트 측 데이터 검증을 위한 외부 JS 연결 --%>
-    <script type="text/javascript" src="/aptweb/resources/js/validation.js?v=1"></script>
+    <script type="text/javascript" src="/aptweb/resources/js/validation.js?v=2"></script>
     <title>시설 등록</title>
 </head>
 <body class="bg-light">

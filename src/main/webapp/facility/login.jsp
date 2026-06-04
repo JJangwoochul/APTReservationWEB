@@ -9,6 +9,10 @@
 <%
     // 서버에서 전달된 에러 코드 확인 및 알림 처리
     String error = request.getParameter("error");
+    // [추가] URL에서 실패했던 아이디를 가져옴
+    String savedId = request.getParameter("userId");
+    if (savedId == null) savedId = "";
+
     if (error != null) {
         String msg = "";
         if (error.equals("login_failed")) msg = "아이디 또는 비밀번호가 일치하지 않습니다.";
@@ -27,7 +31,7 @@
 
 <%
     // 카카오 앱 정보 설정
-    String clientId = "3304185bc7ec807d4a6b7fb8f9b3bf11"; 
+    String clientId = "3304185bc7ec807d4a6b7fb8f9b3bf11"; // REST API 키
     String redirectUri = "http://localhost:8080/aptweb/facility/kakaoCallback.jsp";
     
     // 카카오 인증 URL 생성
@@ -46,7 +50,7 @@
         <form action="<%= request.getContextPath() %>/facility/login_process.jsp" method="post">
             <div class="mb-3">
                 <label for="userId" class="form-label fw-bold text-secondary">Id</label>
-                <input type="text" class="form-control form-control-lg" id="userId" name="userId" placeholder="아이디를 입력하세요">
+                <input type="text" class="form-control form-control-lg" id="userId" name="userId" placeholder="아이디를 입력하세요" value="<%= savedId %>">
             </div>
             
             <div class="mb-3">
