@@ -33,8 +33,11 @@
             </thead>
             <tbody>
                 <%
+                    // 1. 데이터 조회: DAO 객체를 통해 등록된 모든 시설 리스트 호출
                     FacilityDAO dao = FacilityDAO.getInstance();
                     ArrayList<FacilityDTO> listOfFacility = dao.getAllFacility();
+                    
+                    // 2. 동적 렌더링: 시설 리스트를 순회하며 테이블 행(row) 생성
                     if (listOfFacility != null) {
                         for (FacilityDTO facility : listOfFacility) {
                 %>
@@ -46,7 +49,7 @@
                     <td><span class="badge bg-info text-dark"><%=facility.getCondition()%></span></td>
                     <td><%=facility.getPeopleInStock()%>명</td>
                     <td>
-                        <%--수정,삭제 하는 파라미터 전달시킴 --%>
+                        <%-- 3. 기능 호출: 식별값(no)을 파라미터로 전달하여 수정 및 삭제 페이지로 이동 --%>
                         <a href="updateFacility.jsp?no=<%=facility.getFacilityNo()%>" class="btn btn-sm btn-warning">수정</a>
                         <a href="deleteFacility.jsp?no=<%=facility.getFacilityNo()%>" class="btn btn-sm btn-danger" 
                            onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
