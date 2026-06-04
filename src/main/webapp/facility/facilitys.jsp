@@ -2,13 +2,6 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="dto.FacilityDTO" %>
 <%@ page import="dao.FacilityDAO" %>
-<%
-    // 로그인 상태 유지 확인
-    if (session.getAttribute("sessionId") == null) {
-        response.sendRedirect(request.getContextPath() + "/facility/login.jsp");
-        return;
-    }
-%>
 <html>
 <head>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
