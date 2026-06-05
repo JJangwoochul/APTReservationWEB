@@ -53,8 +53,31 @@ CREATE SEQUENCE notice_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE user_seq START WITH 1 INCREMENT BY 1;
 
 -- 시설 번호 시퀀스
-CREATE SEQUENCE facility_seq START WITH 4 INCREMENT BY 1;
+CREATE SEQUENCE facility_seq START WITH 1 INCREMENT BY 1;
 
 -- 예약 번호 시퀀스
 CREATE SEQUENCE reserve_seq START WITH 1 INCREMENT BY 1;
 
+-- 관리자 유저 추가
+INSERT INTO users (userNo, userId, userPw, userName, phone, dong, ho, role) 
+VALUES (user_seq.NEXTVAL, 'admin', '1234', '관리자', '010-0000-0000', '000', '000', 'ADMIN');
+
+-- 일반 유저 추가
+INSERT INTO users (userNo, userId, userPw, userName, phone, dong, ho, role) 
+VALUES (user_seq.NEXTVAL, 'user', '1234', '홍길동', '010-1234-5678', '101', '201', 'USER');
+
+-- 공지사항 추가 (관리자 userNo가 1번이라고 가정)
+INSERT INTO notice (noticeNo, title, content, writerNo) 
+VALUES (notice_seq.NEXTVAL, '아파트 단지 내 시설 이용 안내', '안녕하세요. 시설 이용 시 주의사항입니다.', 1);
+
+-- 시설 3개 추가
+-- 구현할 당시 게스트하우스는 따로 날짜단위이기 때문에 facilityNo가 3번만 날짜단위가 나오게함
+-- 따라서 1,2,4,5 이후 facilityNo들은 일반시설처럼 시간단위 , facilityNo가 3인 게스트하우스만 날짜단위
+INSERT INTO facility (facilityNo, facilityName, description, facilityPrice, condition, peopleInStock) 
+VALUES (facility_seq.NEXTVAL, '헬스장', '최신형 러닝머신 완비', 5000, 'OPEN', 20);
+
+INSERT INTO facility (facilityNo, facilityName, description, facilityPrice, condition, peopleInStock) 
+VALUES (facility_seq.NEXTVAL, '독서실', '조용한 환경의 학습 공간', 2000, 'OPEN', 10);
+
+INSERT INTO facility (facilityNo, facilityName, description, facilityPrice, condition, peopleInStock) 
+VALUES (facility_seq.NEXTVAL, '게스트하우스', '게스트하우스입니다.', 10000, 'OPEN', 10);
